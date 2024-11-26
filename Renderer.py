@@ -3,21 +3,69 @@ from Simulation import Simulation
 
 
 class Renderer:
-    def __init__(self, simulation):
+    def __init__(self, simulation: Simulation):
         pygame.init()
         self.simulation = simulation
         self.screen = pygame.display.set_mode((400, 300))
         self.clock = pygame.time.Clock()
+        self.w_pressed = False
+        self.s_pressed = False
+        self.a_pressed = False
+        self.d_pressed = False
+
+    def draw_player(self):
+        pygame.draw.rect(
+            self.screen,
+            (255, 0, 0),
+            (self.simulation.player.x - 10, self.simulation.player.y - 10, 20, 20),
+        )
 
     def draw_frame(self):
         self.screen.fill((0, 0, 0))
+        self.draw_player()
         pygame.display.flip()
+
+    def handle_keyborad_input(self, event):
+        if event.type == pygame.QUIT:
+            self.simulation.game_over = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                self.w_pressed = True
+            elif event.key == pygame.K_s:
+                self.s_pressed = True
+            elif event.key == pygame.K_a:
+                self.a_pressed = True
+            elif event.key == pygame.K_d:
+                self.d_pressed = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                self.w_pressed = False
+            elif event.key == pygame.K_s:
+                self.s_pressed = False
+            elif event.key == pygame.K_a:
+                self.a_pressed = False
+            elif event.key == pygame.K_d:
+                self.d_pressed = False
+
+    def player_move(self):
+        dx = 0
+        dy = 0
+        if self.w_pressed:
+            dy -= 1
+        if self.s_pressed:
+            dy += 1
+        if self.a_pressed:
+            dx -= 1
+        if self.d_pressed:
+            dx += 1
+        self.simulation.player.move(dx, dy)
 
     def run(self):
         while not self.simulation.game_over:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.simulation.game_over = True
+                self.handle_keyborad_input(event)
+            self.player_move()
+
             self.draw_frame()
             self.simulation.next_step()
             self.clock.tick(60)
