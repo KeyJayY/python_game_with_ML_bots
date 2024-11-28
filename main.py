@@ -1,5 +1,5 @@
-from Simulation import Simulation
-from Renderer import Renderer
+from simulation import Simulation
+from renderer import Renderer
 
 if __name__ == "__main__":
     graphics = True

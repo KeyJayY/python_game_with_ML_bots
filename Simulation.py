@@ -1,11 +1,5 @@
-class Player:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-
-    def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
+from player import Player
+from bots import Bot
 
 
 class Simulation:
@@ -13,7 +7,11 @@ class Simulation:
         self.game_over = False
         self.draw_graphics = True
         self.player = Player()
-        self.bullets=[]
+        self.bullets = []
+
+        self.bots: list[Bot] = []
+        for _ in range(10000):
+            self.bots.append(Bot(self.player))
 
     def run(self):
         while not self.game_over:
