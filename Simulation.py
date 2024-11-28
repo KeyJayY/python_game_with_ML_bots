@@ -13,6 +13,7 @@ class Simulation:
         self.game_over = False
         self.draw_graphics = True
         self.player = Player()
+        self.bullets=[]
 
     def run(self):
         while not self.game_over:
