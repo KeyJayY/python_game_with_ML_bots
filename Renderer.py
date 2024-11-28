@@ -7,7 +7,9 @@ class Renderer:
     def __init__(self, simulation: Simulation):
         pygame.init()
         self.simulation = simulation
-        self.screen = pygame.display.set_mode((400, 300))
+        self.screen = pygame.display.set_mode(
+            (simulation.map.width, simulation.map.height)
+        )
         self.clock = pygame.time.Clock()
         self.w_pressed = False
         self.s_pressed = False
@@ -22,14 +24,31 @@ class Renderer:
             (self.simulation.player.x - 10, self.simulation.player.y - 10, 20, 20),
         )
 
-    def draw_frame(self):
-        self.screen.fill((0, 0, 0))
-        self.draw_player()
+    def draw_bullets(self):
         for bullet in self.simulation.bullets:
             bullet.draw(self.screen)
+
+    def draw_map(self):
+        for obstacle in self.simulation.map.obstacles:
+            pygame.draw.rect(
+                self.screen,
+                (0, 255, 0),
+                (
+                    obstacle["x"],
+                    obstacle["y"],
+                    obstacle["width"],
+                    obstacle["height"],
+                ),
+            )
+
+    def draw_frame(self):
+        self.screen.fill((0, 0, 0))
+        self.draw_map()
+        self.draw_player()
+        self.draw_bullets()
         pygame.display.flip()
 
-    def handle_keyborad_input(self, event):
+    def handle_mouse_and_keyborad_input(self, event):
         if event.type == pygame.QUIT:
             self.simulation.game_over = True
         elif event.type == pygame.KEYDOWN:
@@ -51,12 +70,12 @@ class Renderer:
             elif event.key == pygame.K_d:
                 self.d_pressed = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button==1:
-                self.mouse_pressed=True
+            if event.button == 1:
+                self.mouse_pressed = True
         elif event.type == pygame.MOUSEBUTTONUP:
-            if event.button==1:
-                self.mouse_pressed=False
-        
+            if event.button == 1:
+                self.mouse_pressed = False
+
     def player_move(self):
         dx = 0
         dy = 0
@@ -73,15 +92,14 @@ class Renderer:
     def run(self):
         while not self.simulation.game_over:
             for event in pygame.event.get():
-                self.handle_keyborad_input(event)
+                self.handle_mouse_and_keyborad_input(event)
             self.player_move()
 
-            if(self.mouse_pressed):
-                mouse_x,mouse_y = pygame.mouse.get_pos()
-                self.simulation.bullets.append(Bullet(self.simulation.player,mouse_x,mouse_y))
-                
-            for bullet in self.simulation.bullets:
-                bullet.update()
+            if self.mouse_pressed:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                self.simulation.bullets.append(
+                    Bullet(self.simulation.player, mouse_x, mouse_y)
+                )
 
             self.draw_frame()
             self.simulation.next_step()
