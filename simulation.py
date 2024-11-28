@@ -1,14 +1,6 @@
+from player import Player
+from bots import Bot
 import json
-
-
-class Player:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-
-    def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
 
 
 class Map:
@@ -27,6 +19,10 @@ class Simulation:
         self.player = Player()
         self.bullets = []
         self.map = Map("map.json")
+
+        self.bots: list[Bot] = []
+        # for _ in range(10000):
+        #     self.bots.append(Bot(self.player))
 
     def run(self):
         while not self.game_over:

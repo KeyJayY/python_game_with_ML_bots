@@ -1,11 +1,13 @@
 import pygame
-from Simulation import Simulation
+from simulation import Simulation
 from bullet import Bullet
+from config import *
 
 
 class Renderer:
     def __init__(self, simulation: Simulation):
         pygame.init()
+
         self.simulation = simulation
         self.screen = pygame.display.set_mode(
             (simulation.map.width, simulation.map.height)
@@ -20,8 +22,13 @@ class Renderer:
     def draw_player(self):
         pygame.draw.rect(
             self.screen,
-            (255, 0, 0),
-            (self.simulation.player.x - 10, self.simulation.player.y - 10, 20, 20),
+            PLAYER_COLOR,
+            (
+                self.simulation.player.x,
+                self.simulation.player.y,
+                PLAYER_WIDTH,
+                PLAYER_HEIGHT,
+            ),
         )
 
     def draw_bullets(self):
@@ -32,7 +39,7 @@ class Renderer:
         for obstacle in self.simulation.map.obstacles:
             pygame.draw.rect(
                 self.screen,
-                (0, 255, 0),
+                OBSTACLE_COLOR,
                 (
                     obstacle["x"],
                     obstacle["y"],
@@ -41,11 +48,16 @@ class Renderer:
                 ),
             )
 
+    def draw_bots(self):
+        for bot in self.simulation.bots:
+            bot.draw_bot(self.screen)
+
     def draw_frame(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.fill(BG_COLOR)
         self.draw_map()
         self.draw_player()
         self.draw_bullets()
+        self.draw_bots()
         pygame.display.flip()
 
     def handle_mouse_and_keyborad_input(self, event):
@@ -80,13 +92,13 @@ class Renderer:
         dx = 0
         dy = 0
         if self.w_pressed:
-            dy -= 1
+            dy -= PLAYER_SPEED
         if self.s_pressed:
-            dy += 1
+            dy += PLAYER_SPEED
         if self.a_pressed:
-            dx -= 1
+            dx -= PLAYER_SPEED
         if self.d_pressed:
-            dx += 1
+            dx += PLAYER_SPEED
         self.simulation.player.move(dx, dy)
 
     def run(self):
@@ -103,4 +115,4 @@ class Renderer:
 
             self.draw_frame()
             self.simulation.next_step()
-            self.clock.tick(60)
+            self.clock.tick(GAME_FPS)
