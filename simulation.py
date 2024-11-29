@@ -9,8 +9,10 @@ class Simulation:
         self.player = Player()
         self.bullets = []
 
+
+        # Initializing bots
         self.bots: list[Bot] = []
-        for _ in range(10):
+        for _ in range(500):
             self.bots.append(Bot(self.player))
             self.bots.append(BotSprinter(self.player))
 
