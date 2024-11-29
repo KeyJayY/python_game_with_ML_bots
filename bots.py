@@ -20,9 +20,9 @@ class Bot(Player):
                 + (self.y + BOT_DEFAULT_HEIGHT / 2 - player.y - PLAYER_HEIGHT / 2) ** 2
             )
             if (
-                MAX_SPAWN_DISTANCE_FROM_PLAYER
+                MAX_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER
                 >= self.distance_from_player
-                >= MIN_SPAWN_DISTANCE_FROM_PLAYER
+                >= MIN_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER
             ):
                 break
 
