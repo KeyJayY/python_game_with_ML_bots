@@ -34,7 +34,7 @@ class Renderer:
         self.draw_player()
         for bullet in self.simulation.bullets:
             bullet.draw(self.screen)
-            
+
         for bot in self.simulation.bots:
             bot.draw_bot(self.screen)
 
@@ -86,6 +86,9 @@ class Renderer:
             for event in pygame.event.get():
                 self.handle_keyborad_input(event)
             self.player_move()
+
+            for bot in self.simulation.bots:
+                bot.move_to_player()
 
             if self.mouse_pressed:
                 mouse_x, mouse_y = pygame.mouse.get_pos()

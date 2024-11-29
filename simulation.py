@@ -1,5 +1,5 @@
 from player import Player
-from bots import Bot
+from bots import Bot, BotSprinter
 
 
 class Simulation:
@@ -10,8 +10,9 @@ class Simulation:
         self.bullets = []
 
         self.bots: list[Bot] = []
-        for _ in range(10000):
+        for _ in range(10):
             self.bots.append(Bot(self.player))
+            self.bots.append(BotSprinter(self.player))
 
     def run(self):
         while not self.game_over:
