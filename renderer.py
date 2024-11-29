@@ -9,7 +9,9 @@ class Renderer:
         pygame.init()
 
         self.simulation = simulation
-        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.screen = pygame.display.set_mode(
+            (simulation.map.width, simulation.map.height)
+        )
         self.clock = pygame.time.Clock()
         self.w_pressed = False
         self.s_pressed = False
@@ -29,18 +31,36 @@ class Renderer:
             ),
         )
 
-    def draw_frame(self):
-        self.screen.fill(BG_COLOR)
-        self.draw_player()
+    def draw_bullets(self):
         for bullet in self.simulation.bullets:
             bullet.draw(self.screen)
-            
+
+    def draw_map(self):
+        for obstacle in self.simulation.map.obstacles:
+            pygame.draw.rect(
+                self.screen,
+                OBSTACLE_COLOR,
+                (
+                    obstacle["x"],
+                    obstacle["y"],
+                    obstacle["width"],
+                    obstacle["height"],
+                ),
+            )
+
+    def draw_bots(self):
         for bot in self.simulation.bots:
             bot.draw_bot(self.screen)
 
+    def draw_frame(self):
+        self.screen.fill(BG_COLOR)
+        self.draw_map()
+        self.draw_player()
+        self.draw_bullets()
+        self.draw_bots()
         pygame.display.flip()
 
-    def handle_keyborad_input(self, event):
+    def handle_mouse_and_keyborad_input(self, event):
         if event.type == pygame.QUIT:
             self.simulation.game_over = True
         elif event.type == pygame.KEYDOWN:
@@ -84,7 +104,7 @@ class Renderer:
     def run(self):
         while not self.simulation.game_over:
             for event in pygame.event.get():
-                self.handle_keyborad_input(event)
+                self.handle_mouse_and_keyborad_input(event)
             self.player_move()
 
             if self.mouse_pressed:
@@ -92,9 +112,6 @@ class Renderer:
                 self.simulation.bullets.append(
                     Bullet(self.simulation.player, mouse_x, mouse_y)
                 )
-
-            for bullet in self.simulation.bullets:
-                bullet.update()
 
             self.draw_frame()
             self.simulation.next_step()

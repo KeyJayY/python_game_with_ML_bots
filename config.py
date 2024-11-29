@@ -22,6 +22,7 @@ COLOR_ORANGE: tuple[int, int, int] = 255, 127, 0
 
 ############################  BACKGROUND  ############################
 BG_COLOR: tuple[int, int, int] = COLOR_BLACK
+OBSTACLE_COLOR: tuple[int, int, int] = COLOR_GREEN
 
 ####################################################################
 #############################  PLAYER  #############################
