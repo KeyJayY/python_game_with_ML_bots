@@ -16,6 +16,7 @@ COLOR_BLUE: tuple[int, int, int] = 0, 0, 255
 
 # Colors
 BG_COLOR: tuple[int, int, int] = COLOR_BLACK
+OBSTACLE_COLOR: tuple[int, int, int] = COLOR_GREEN
 
 # Player properties
 PLAYER_COLOR: tuple[int, int, int] = COLOR_BLUE
