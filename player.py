@@ -1,10 +1,9 @@
-from config import PLAYER_START_X, PLAYER_START_Y
-
+from config_dataclass import *
 
 class Player:
     def __init__(self):
-        self.x: int = PLAYER_START_X
-        self.y: int = PLAYER_START_Y
+        self.x: int = PlayerConfig().start_x
+        self.y: int = PlayerConfig().start_y
 
     def move(self, dx, dy):
         self.x += dx

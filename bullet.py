@@ -1,15 +1,13 @@
 import pygame
 import math
 
-from config import *
+from config_dataclass import *
 
 
 class Bullet:
     def __init__(self, player, mouse_x, mouse_y):
-        self.x = player.x + PLAYER_WIDTH / 2
-        self.y = player.y + PLAYER_HEIGHT / 2
-        self.bullet_speed = BULLET_SPEED
-        self.radius = BULLET_RADIUS
+        self.x = player.x + PlayerConfig().width / 2
+        self.y = player.y + PlayerConfig().height / 2
         self.x_direction = mouse_x - self.x
         self.y_direction = mouse_y - self.y
 
@@ -19,10 +17,13 @@ class Bullet:
             self.y_direction /= direction_lenght
 
     def update(self):
-        self.x += self.x_direction * self.bullet_speed
-        self.y += self.y_direction * self.bullet_speed
+        self.x += self.x_direction * BulletConfig().speed
+        self.y += self.y_direction * BulletConfig().speed
 
     def draw(self, screen):
         pygame.draw.circle(
-            screen, BULLET_COLOR, (int(self.x), int(self.y)), self.radius
+            screen,
+            BulletConfig().color,
+            (int(self.x), int(self.y)),
+            BulletConfig().radius,
         )

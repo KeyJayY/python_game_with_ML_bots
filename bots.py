@@ -4,7 +4,7 @@ from player import Player
 from random import randint
 import math as mth
 
-from config import *
+from config_dataclass import *
 
 
 class Bot(Player):
@@ -15,45 +15,45 @@ class Bot(Player):
 
         # Choosing where to spawn
         while True:
-            self.x: int = randint(-WINDOW_WIDTH, WINDOW_WIDTH)
-            self.y: int = randint(-WINDOW_HEIGHT, WINDOW_HEIGHT)
+            self.x: int = randint(-WindowConfig().width, WindowConfig().width)
+            self.y: int = randint(-WindowConfig().height, WindowConfig().height)
             self.spawn_distance_from_player: float = np.sqrt(
-                (self.x + BOT_DEFAULT_WIDTH / 2 - self._player.x - PLAYER_WIDTH / 2)
+                (self.x + BotConfig().height / 2 - self._player.x - PlayerConfig().width / 2)
                 ** 2
-                + (self.y + BOT_DEFAULT_HEIGHT / 2 - self._player.y - PLAYER_HEIGHT / 2)
+                + (self.y + BotConfig().height / 2 - self._player.y - PlayerConfig().height / 2)
                 ** 2
             )
             if (
-                MAX_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER
+                BotConfig().max_spawn_radius
                 >= self.spawn_distance_from_player
-                >= MIN_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER
+                >= BotConfig().min_spawn_radius
             ):
                 break
 
     def draw_bot(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(
             screen,
-            BOT_DEFAULT_COLOR,
+            BotConfig().color,
             (
                 self.x,
                 self.y,
-                BOT_DEFAULT_WIDTH,
-                BOT_DEFAULT_HEIGHT,
+                BotConfig().height,
+                BotConfig().height,
             ),
         )
 
     def _get_vector_to_player_parameters(self, bot_width, bot_height) -> np.ndarray:
         vector_to_player: np.ndarray = np.array(
             [
-                self.x + bot_width / 2 - (self._player.x + PLAYER_WIDTH / 2),
-                self.y + bot_height / 2 - (self._player.y + PLAYER_HEIGHT / 2),
+                self.x + bot_width / 2 - (self._player.x + PlayerConfig().width / 2),
+                self.y + bot_height / 2 - (self._player.y + PlayerConfig().height / 2),
             ]
         )
         return vector_to_player
 
     def move_to_player(self):
         vector: np.ndarray = self._get_vector_to_player_parameters(
-            BOT_DEFAULT_WIDTH, BOT_DEFAULT_HEIGHT
+            BotConfig().height, BotConfig().height
         )
 
         # Random movement, but most likely towards player
@@ -70,12 +70,12 @@ class Bot(Player):
         )
 
         # Pseudo collisions
-        if np.linalg.norm(rotated_vector) < PLAYER_RADIUS + BOT_DEFAULT_RADIUS:
+        if np.linalg.norm(rotated_vector) < PlayerConfig().radius + BotConfig().radius:
             return
 
         rotated_vector_normalized = rotated_vector / np.linalg.norm(rotated_vector)
-        self.x -= rotated_vector_normalized[0] * BOT_DEFAULT_SPEED
-        self.y -= rotated_vector_normalized[1] * BOT_DEFAULT_SPEED
+        self.x -= rotated_vector_normalized[0] * BotConfig().speed
+        self.y -= rotated_vector_normalized[1] * BotConfig().speed
 
 
 class BotSprinter(Bot):
@@ -89,12 +89,12 @@ class BotSprinter(Bot):
     def draw_bot(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(
             screen,
-            BOT_SPRINTER_COLOR,
+            SprinterBotConfig().color,
             (
                 self.x,
                 self.y,
-                BOT_SPRINTER_WIDTH,
-                BOT_SPRINTER_HEIGHT,
+                SprinterBotConfig().width,
+                SprinterBotConfig().height,
             ),
         )
 
@@ -105,15 +105,15 @@ class BotSprinter(Bot):
         elapsed_time = (pygame.time.get_ticks() - self.start_time) / 1000
 
         # Acceleration
-        if elapsed_time < BOT_SPRINTER_TIME_TO_MAX_SPEED:
-            self.current_speed = BOT_SPRINTER_SPEED * (
-                elapsed_time / BOT_SPRINTER_TIME_TO_MAX_SPEED
+        if elapsed_time < SprinterBotConfig().time_to_max_speed:
+            self.current_speed = SprinterBotConfig().speed * (
+                elapsed_time / SprinterBotConfig().time_to_max_speed
             )
         else:
-            self.current_speed = BOT_SPRINTER_SPEED
+            self.current_speed = SprinterBotConfig().speed
 
         vector: np.ndarray = self._get_vector_to_player_parameters(
-            BOT_SPRINTER_WIDTH, BOT_DEFAULT_HEIGHT
+            SprinterBotConfig().width, BotConfig().height
         )
         vector_normalized = vector / np.linalg.norm(vector)
 
@@ -121,13 +121,13 @@ class BotSprinter(Bot):
         new_y = self.y - vector_normalized[1] * self.current_speed
 
         current_distance_to_player = np.sqrt(
-            (new_x + BOT_SPRINTER_WIDTH / 2 - self._player.x - PLAYER_WIDTH / 2) ** 2
-            + (new_y + BOT_SPRINTER_HEIGHT / 2 - self._player.y - PLAYER_HEIGHT / 2)
+            (new_x + SprinterBotConfig().width / 2 - self._player.x - PlayerConfig().width / 2) ** 2
+            + (new_y + SprinterBotConfig().height / 2 - self._player.y - PlayerConfig().height / 2)
             ** 2
         )
 
         # Pseudo collisions
-        if current_distance_to_player < PLAYER_RADIUS + BOT_SPRINTER_RADIUS:
+        if current_distance_to_player < PlayerConfig().radius + SprinterBotConfig().radius:
             self.moving = False
             return
 
