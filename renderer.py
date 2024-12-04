@@ -39,7 +39,7 @@ class Renderer:
         for obstacle in self.simulation.map.obstacles:
             pygame.draw.rect(
                 self.screen,
-                OBSTACLE_COLOR,
+                Color().green,
                 (
                     obstacle["x"],
                     obstacle["y"],
@@ -53,7 +53,7 @@ class Renderer:
             bot.draw_bot(self.screen)
 
     def draw_frame(self):
-        self.screen.fill(BG_COLOR)
+        self.screen.fill(Color().black)
         self.draw_map()
         self.draw_player()
         self.draw_bullets()
