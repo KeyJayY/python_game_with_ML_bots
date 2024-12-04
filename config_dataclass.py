@@ -35,7 +35,7 @@ class PlayerConfig:
     color: tuple[int, int, int] = Color().blue
     width: int = 40
     height: int = 40
-    speed: int = 3
+    speed: int = 5
 
     @property
     def radius(self) -> float:
@@ -88,4 +88,6 @@ class SprinterBotConfig(BotConfig):
     time_to_max_speed: int = 3
 
 
-
+@dataclass(frozen=True)
+class PhysicsConfig:
+    gravity: float = 1

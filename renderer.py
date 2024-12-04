@@ -64,20 +64,16 @@ class Renderer:
         if event.type == pygame.QUIT:
             self.simulation.game_over = True
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                self.w_pressed = True
-            elif event.key == pygame.K_s:
-                self.s_pressed = True
-            elif event.key == pygame.K_a:
+            if event.key == pygame.K_a:
                 self.a_pressed = True
             elif event.key == pygame.K_d:
                 self.d_pressed = True
+            elif event.key == pygame.K_w:
+                self.simulation.player.jump()
+            elif event.key == pygame.K_SPACE:
+                self.simulation.player.jump()
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_w:
-                self.w_pressed = False
-            elif event.key == pygame.K_s:
-                self.s_pressed = False
-            elif event.key == pygame.K_a:
+            if event.key == pygame.K_a:
                 self.a_pressed = False
             elif event.key == pygame.K_d:
                 self.d_pressed = False
@@ -90,16 +86,11 @@ class Renderer:
 
     def player_move(self):
         dx = 0
-        dy = 0
-        if self.w_pressed:
-            dy -= PlayerConfig().speed
-        if self.s_pressed:
-            dy += PlayerConfig().speed
         if self.a_pressed:
             dx -= PlayerConfig().speed
         if self.d_pressed:
             dx += PlayerConfig().speed
-        self.simulation.player.move(dx, dy)
+        self.simulation.player.move(dx, 0)
 
     def run(self):
         while not self.simulation.game_over:
