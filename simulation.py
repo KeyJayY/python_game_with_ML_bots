@@ -1,5 +1,15 @@
 from player import Player
 from bots import Bot, BotSprinter
+import json
+
+
+class Map:
+    def __init__(self, file_name):
+        with open(file_name, "r") as file:
+            data = json.load(file)
+            self.width = data["width"]
+            self.height = data["height"]
+            self.obstacles = data["obstacles"]
 
 
 class Simulation:
@@ -8,6 +18,7 @@ class Simulation:
         self.draw_graphics = True
         self.player = Player()
         self.bullets = []
+        self.map = Map("map.json")
 
 
         # Initializing bots
@@ -21,4 +32,5 @@ class Simulation:
             self.next_step()
 
     def next_step(self):
-        pass
+        for bullet in self.bullets:
+            bullet.update()

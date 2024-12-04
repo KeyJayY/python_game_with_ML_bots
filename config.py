@@ -22,6 +22,7 @@ COLOR_ORANGE: tuple[int, int, int] = 255, 127, 0
 
 ############################  BACKGROUND  ############################
 BG_COLOR: tuple[int, int, int] = COLOR_BLACK
+OBSTACLE_COLOR: tuple[int, int, int] = COLOR_GREEN
 
 ####################################################################
 #############################  PLAYER  #############################
@@ -31,10 +32,12 @@ PLAYER_WIDTH: int = 40
 PLAYER_HEIGHT: int = 40
 PLAYER_RADIUS: float = np.sqrt(PLAYER_WIDTH**2 + PLAYER_HEIGHT**2) / 2
 
+
 PLAYER_START_X: int = (WINDOW_WIDTH - PLAYER_WIDTH) // 2
 PLAYER_START_Y: int = (WINDOW_HEIGHT - PLAYER_HEIGHT) // 2
 
 PLAYER_SPEED: int = 3
+
 
 ####################################################################
 #############################  BULLET  #############################
@@ -83,7 +86,26 @@ BOT_SPRINTER_SPAWN_RADIUS: float = (
 )  # r for ring
 
 
-MIN_SPRINTER_SPAWN_DISTANCE_FROM_PLAYER: float = BOT_SPRINTER_SPAWN_RADIUS
-MAX_SPRINTER_SPAWN_DISTANCE_FROM_PLAYER: float = (
+MIN_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER: int = BOT_DEFAULT_SPAWN_RADIUS
+MAX_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER: int = (
+    MIN_DEFAULT_SPAWN_DISTANCE_FROM_PLAYER + BOT_DEFAULT_SPAWN_RANGE
+)
+
+############################  SPRINTER  ############################
+BOT_SPRINTER_COLOR: tuple[int, int, int] = COLOR_ORANGE
+BOT_SPRINTER_WIDTH: int = 5
+BOT_SPRINTER_HEIGHT: int = 5
+BOT_SPRINTER_RADIUS: int = round(
+    np.sqrt(BOT_SPRINTER_WIDTH**2 + BOT_SPRINTER_HEIGHT**2) / 2
+)
+
+BOT_SPRINTER_SPEED: int = 3 * BOT_DEFAULT_SPEED
+
+BOT_SPRINTER_SPAWN_RANGE: int = BOT_DEFAULT_SPAWN_RANGE  # R - r for ring
+BOT_SPRINTER_SPAWN_RADIUS: int = PLAYER_RADIUS + BOT_SPRINTER_RADIUS + 100  # r for ring
+
+
+MIN_SPRINTER_SPAWN_DISTANCE_FROM_PLAYER: int = BOT_SPRINTER_SPAWN_RADIUS
+MAX_SPRINTER_SPAWN_DISTANCE_FROM_PLAYER: int = (
     MIN_SPRINTER_SPAWN_DISTANCE_FROM_PLAYER + BOT_SPRINTER_SPAWN_RANGE
 )

@@ -27,6 +27,7 @@ class Bot(Player):
                 BotConfig().max_spawn_radius
                 >= self.spawn_distance_from_player
                 >= BotConfig().min_spawn_radius
+
             ):
                 break
 
