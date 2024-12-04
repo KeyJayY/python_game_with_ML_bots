@@ -1,7 +1,7 @@
 import pygame
 from simulation import Simulation
 from bullet import Bullet
-from config import *
+from config_dataclass import *
 
 
 class Renderer:
@@ -22,12 +22,12 @@ class Renderer:
     def draw_player(self):
         pygame.draw.rect(
             self.screen,
-            PLAYER_COLOR,
+            PlayerConfig().color,
             (
                 self.simulation.player.x,
                 self.simulation.player.y,
-                PLAYER_WIDTH,
-                PLAYER_HEIGHT,
+                PlayerConfig().width,
+                PlayerConfig().height,
             ),
         )
 
@@ -92,13 +92,13 @@ class Renderer:
         dx = 0
         dy = 0
         if self.w_pressed:
-            dy -= PLAYER_SPEED
+            dy -= PlayerConfig().speed
         if self.s_pressed:
-            dy += PLAYER_SPEED
+            dy += PlayerConfig().speed
         if self.a_pressed:
-            dx -= PLAYER_SPEED
+            dx -= PlayerConfig().speed
         if self.d_pressed:
-            dx += PLAYER_SPEED
+            dx += PlayerConfig().speed
         self.simulation.player.move(dx, dy)
 
     def run(self):
@@ -106,6 +106,9 @@ class Renderer:
             for event in pygame.event.get():
                 self.handle_mouse_and_keyborad_input(event)
             self.player_move()
+
+            for bot in self.simulation.bots:
+                bot.move_to_player()
 
             if self.mouse_pressed:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -115,4 +118,4 @@ class Renderer:
 
             self.draw_frame()
             self.simulation.next_step()
-            self.clock.tick(GAME_FPS)
+            self.clock.tick(GameConfig().fps)
