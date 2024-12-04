@@ -4,7 +4,7 @@ from player import Player
 from random import randint
 import math as mth
 
-from config_dataclass import *
+from config_dataclass import BotConfig, SprinterBotConfig, PlayerConfig, WindowConfig
 
 
 class Bot(Player):
@@ -18,16 +18,25 @@ class Bot(Player):
             self.x: int = randint(-WindowConfig().width, WindowConfig().width)
             self.y: int = randint(-WindowConfig().height, WindowConfig().height)
             self.spawn_distance_from_player: float = np.sqrt(
-                (self.x + BotConfig().height / 2 - self._player.x - PlayerConfig().width / 2)
+                (
+                    self.x
+                    + BotConfig().height / 2
+                    - self._player.x
+                    - PlayerConfig().width / 2
+                )
                 ** 2
-                + (self.y + BotConfig().height / 2 - self._player.y - PlayerConfig().height / 2)
+                + (
+                    self.y
+                    + BotConfig().height / 2
+                    - self._player.y
+                    - PlayerConfig().height / 2
+                )
                 ** 2
             )
             if (
                 BotConfig().max_spawn_radius
                 >= self.spawn_distance_from_player
                 >= BotConfig().min_spawn_radius
-
             ):
                 break
 
@@ -122,13 +131,27 @@ class BotSprinter(Bot):
         new_y = self.y - vector_normalized[1] * self.current_speed
 
         current_distance_to_player = np.sqrt(
-            (new_x + SprinterBotConfig().width / 2 - self._player.x - PlayerConfig().width / 2) ** 2
-            + (new_y + SprinterBotConfig().height / 2 - self._player.y - PlayerConfig().height / 2)
+            (
+                new_x
+                + SprinterBotConfig().width / 2
+                - self._player.x
+                - PlayerConfig().width / 2
+            )
+            ** 2
+            + (
+                new_y
+                + SprinterBotConfig().height / 2
+                - self._player.y
+                - PlayerConfig().height / 2
+            )
             ** 2
         )
 
         # Pseudo collisions
-        if current_distance_to_player < PlayerConfig().radius + SprinterBotConfig().radius:
+        if (
+            current_distance_to_player
+            < PlayerConfig().radius + SprinterBotConfig().radius
+        ):
             self.moving = False
             return
 

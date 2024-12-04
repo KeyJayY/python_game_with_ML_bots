@@ -1,7 +1,7 @@
 import pygame
 from simulation import Simulation
 from bullet import Bullet
-from config_dataclass import *
+from config_dataclass import PlayerConfig, GameConfig, Color
 
 
 class Renderer:

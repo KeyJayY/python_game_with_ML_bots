@@ -1,4 +1,4 @@
-from config_dataclass import *
+from config_dataclass import PlayerConfig, PhysicsConfig
 
 
 class Player:
