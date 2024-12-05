@@ -12,6 +12,7 @@ class Bot(Player):
         super().__init__()
         self._player: Player = player
         self.type: str = "default"
+        self.health = BotConfig().health
 
         # Choosing where to spawn
         while True:
