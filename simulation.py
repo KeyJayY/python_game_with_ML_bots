@@ -53,7 +53,7 @@ class Simulation:
     def next_step(self):
         for bullet in self.bullets:
             bullet.update()
-            if bullet.bullet_check_collision(self.map.obstacles):
+            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
                 self.bullets.remove(bullet)
         self.player.apply_y_movement()
         self.player.apply_gravity()

@@ -1,24 +1,40 @@
 import pygame
 import math
+import random
 
 from config import PlayerConfig, BulletConfig
 
 
 class Bullet:
-    def __init__(self, player, mouse_x, mouse_y):
+    def __init__(self, player, mouse_x, mouse_y, mode="single"):
         self.x = player.x + PlayerConfig().width / 2
         self.y = player.y + PlayerConfig().height / 2
         self.x_direction = mouse_x - self.x
         self.y_direction = mouse_y - self.y
+        self.mode=mode
+        
 
         direction_lenght = math.sqrt(self.x_direction**2 + self.y_direction**2)
         if direction_lenght != 0:
             self.x_direction /= direction_lenght
             self.y_direction /= direction_lenght
 
+        if mode=="shotgun":
+            spread_angle=10
+            angle = math.atan2(self.y_direction, self.x_direction)
+            spread = math.radians(random.uniform(-spread_angle, spread_angle))  
+            angle += spread
+            self.x_shotgun_direction = math.cos(angle)
+            self.y_shotgun_direction = math.sin(angle)
+
     def update(self):
-        self.x += self.x_direction * BulletConfig().speed
-        self.y += self.y_direction * BulletConfig().speed
+        if self.mode=="single":
+            self.x += self.x_direction * BulletConfig().speed
+            self.y += self.y_direction * BulletConfig().speed
+        elif self.mode=="shotgun":
+            self.x += self.x_shotgun_direction * (BulletConfig().speed-4)
+            self.y += self.y_shotgun_direction * (BulletConfig().speed-4)
+
 
     def draw(self, screen):
         pygame.draw.circle(
