@@ -138,7 +138,7 @@ class Renderer:
             if self.mouse_pressed:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 self.simulation.bullets.append(
-                    Bullet(self.simulation.player, mouse_x, mouse_y)
+                    Bullet(self.simulation.player, mouse_x, mouse_y, "shotgun")
                 )
 
             self.draw_frame()
