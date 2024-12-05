@@ -1,11 +1,11 @@
-from config_dataclass import PlayerConfig, PhysicsConfig
+from config import PlayerConfig, PhysicsConfig
 
 
 class Player:
     def __init__(self):
-        self.x: int = PlayerConfig().start_x
-        self.y: int = PlayerConfig().start_y
-        self.velocity_y: int = 0
+        self.x = PlayerConfig().start_x
+        self.y = PlayerConfig().start_y
+        self.velocity_y: float = 0
         self.is_falling = False
 
     def move(self, dx, dy):
@@ -14,7 +14,7 @@ class Player:
 
     def jump(self):
         if not self.is_falling:
-            self.velocity_y = -20
+            self.velocity_y = PlayerConfig().initial_jump_velocity
             self.is_falling = True
 
     def apply_y_movement(self):

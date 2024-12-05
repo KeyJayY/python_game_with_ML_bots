@@ -4,7 +4,7 @@ from player import Player
 from random import randint
 import math as mth
 
-from config_dataclass import BotConfig, SprinterBotConfig, PlayerConfig, WindowConfig
+from config import BotConfig, SprinterBotConfig, PlayerConfig, WindowConfig
 
 
 class Bot(Player):

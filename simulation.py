@@ -2,7 +2,7 @@ from player import Player
 from bots import Bot, BotSprinter
 import json
 
-from config_dataclass import PlayerConfig
+from config import PlayerConfig
 
 
 class Map:
@@ -24,7 +24,7 @@ class Simulation:
 
         # Initializing bots
         self.bots: list[Bot] = []
-        for _ in range(500):
+        for _ in range(10):
             self.bots.append(Bot(self.player))
             self.bots.append(BotSprinter(self.player))
 

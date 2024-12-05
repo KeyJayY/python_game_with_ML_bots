@@ -1,7 +1,7 @@
 import pygame
 import math
 
-from config_dataclass import PlayerConfig, BulletConfig
+from config import PlayerConfig, BulletConfig
 
 
 class Bullet:
