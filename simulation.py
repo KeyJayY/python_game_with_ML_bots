@@ -1,8 +1,9 @@
 from player import Player
 from bots import Bot, BotSprinter
 import json
+from bullet import Bullet
 
-from config import PlayerConfig
+from config import PlayerConfig, BulletConfig
 
 
 class Map:
@@ -52,6 +53,8 @@ class Simulation:
     def next_step(self):
         for bullet in self.bullets:
             bullet.update()
+            if bullet.bullet_check_collision(self.map.obstacles):
+                self.bullets.remove(bullet)
         self.player.apply_y_movement()
         self.player.apply_gravity()
         self.check_collisions()

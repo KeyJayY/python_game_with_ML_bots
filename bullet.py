@@ -27,3 +27,21 @@ class Bullet:
             (int(self.x), int(self.y)),
             BulletConfig().radius,
         )
+    def check_bullet_collision_with_obstacles(self, obstacles):
+        bullet_left = self.x - BulletConfig.radius
+        bullet_right = self.x + BulletConfig.radius
+        bullet_top = self.y - BulletConfig.radius
+        bullet_bottom = self.y + BulletConfig.radius
+
+        for obstacle in obstacles:
+            obstacle_left = obstacle["x"]
+            obstacle_right = obstacle["x"] + obstacle["width"]
+            obstacle_top = obstacle["y"]
+            obstacle_bottom = obstacle["y"] + obstacle["height"]
+            if not (bullet_right <= obstacle_left or  
+                    bullet_left >= obstacle_right or  
+                    bullet_bottom <= obstacle_top or  
+                    bullet_top >= obstacle_bottom):   
+                return True
+              
+        return False
