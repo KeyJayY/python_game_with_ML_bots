@@ -5,6 +5,8 @@ class Player:
     def __init__(self):
         self.x = PlayerConfig().start_x
         self.y = PlayerConfig().start_y
+        self.width = PlayerConfig().width
+        self.height = PlayerConfig().height
         self.velocity_y: float = 0
         self.is_falling = False
 
