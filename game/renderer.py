@@ -1,7 +1,7 @@
 import pygame
-from simulation import Simulation
-from bullet import Bullet
-from config import PlayerConfig, GameConfig, Color ,HealthBarConfig
+from game.simulation import Simulation
+from characters.bullet import Bullet
+from config import PlayerConfig, GameConfig, Color, HealthBarConfig
 
 
 class Renderer:
@@ -51,38 +51,26 @@ class Renderer:
     def draw_bots(self):
         for bot in self.simulation.bots:
             bot.draw_bot(self.screen)
-    
+
     def draw_healths_bars(self):
-        health=self.simulation.player.health
-        font =pygame.font.Font(HealthBarConfig().font,HealthBarConfig.font_size)
-        label=f"Player: {health} %"
-        y=HealthBarConfig().y
-        for nr ,bot in enumerate(self.simulation.bots):
+        health = self.simulation.player.health
+        font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
+        label = f"Player: {health} %"
+        y = HealthBarConfig().y
+        for nr, bot in enumerate(self.simulation.bots):
             self.screen.blit(
-                font.render(
-                    label,
-                    True,Color().white
-                ),
-                (
-                    HealthBarConfig().x,
-                    y-20
-                )
+                font.render(label, True, Color().white), (HealthBarConfig().x, y - 20)
             )
             pygame.draw.rect(
                 self.screen,
                 Color().light_blue,
-                (
-                    HealthBarConfig().x,
-                    y,
-                    health,
-                    HealthBarConfig().height
-                ),
+                (HealthBarConfig().x, y, health, HealthBarConfig().height),
             )
-            health=bot.health
-            y+=HealthBarConfig.offset
-            label=f"Bot {nr+1}: {health} %"
+            health = bot.health
+            y += HealthBarConfig.offset
+            label = f"Bot {nr+1}: {health} %"
             # display health for only two bots
-            if nr==2:
+            if nr == 2:
                 break
 
     def draw_frame(self):
@@ -93,7 +81,7 @@ class Renderer:
         self.draw_bots()
         self.draw_healths_bars()
         pygame.display.flip()
-    
+
     def handle_mouse_and_keyborad_input(self, event):
         if event.type == pygame.QUIT:
             self.simulation.game_over = True

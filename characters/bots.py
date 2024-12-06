@@ -1,7 +1,7 @@
 import numpy as np
 import pygame
-from map import Map
-from player import Player
+from map.map import Map
+from characters.player import Player
 from random import randint
 import math as mth
 from icecream import ic

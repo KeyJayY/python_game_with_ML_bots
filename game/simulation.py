@@ -1,6 +1,6 @@
-from map import Map
-from player import Player
-from bots import Bot, BotSprinter
+from map.map import Map
+from characters.player import Player
+from characters.bots import Bot, BotSprinter
 
 from config import PlayerConfig
 
