@@ -7,12 +7,13 @@ class Map:
     def __init__(self, file_name):
         with open(file_name, "r") as file:
             data = json.load(file)
-            self.width = data["width"]
-            self.height = data["height"]
+            self.width = MapConfig().width  # data["width"]
+            self.height = MapConfig().height  # data["height"]
             self.obstacles = data["obstacles"]
-            
-    
-    def create_grid(self,cell_size: int) -> list[list[int]]: # For static map (no moving obstacles)
+
+    def create_grid(
+        self, cell_size: int
+    ) -> list[list[int]]:  # For static map (no moving obstacles)
         rows = MapConfig().height // cell_size
         cols = MapConfig().width // cell_size
         grid = [[0 for _ in range(cols)] for _ in range(rows)]
