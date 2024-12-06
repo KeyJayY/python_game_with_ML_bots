@@ -26,6 +26,8 @@ class Color:
 @dataclass(frozen=True)
 class MapConfig:
     bg_color: tuple[int, int, int] = Color().black
+    width = WindowConfig().width
+    height = WindowConfig().height
 
 
 @dataclass(frozen=True)
@@ -63,6 +65,7 @@ class BotConfig:
     width: int = 10
     height: int = 10
     speed: float = PlayerConfig().speed * 0.6
+    cell_size = 20
 
     spawn_range: int = 200  # R - r for ring
 
@@ -72,7 +75,7 @@ class BotConfig:
 
     @property
     def min_spawn_radius(self) -> float:  # r for ring
-        return PlayerConfig().radius + self.radius + self.radius
+        return PlayerConfig().radius + self.radius + 100
 
     @property
     def max_spawn_radius(self) -> float:  # R for ring
