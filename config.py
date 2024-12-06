@@ -4,8 +4,8 @@ import numpy as np
 
 @dataclass(frozen=True)
 class WindowConfig:
-    width: int = 1600
-    height: int = 900
+    width: int = 800
+    height: int = 800
 
 
 @dataclass(frozen=True)
@@ -28,8 +28,6 @@ class Color:
 @dataclass(frozen=True)
 class MapConfig:
     bg_color: tuple[int, int, int] = Color().black
-    width = WindowConfig().width
-    height = WindowConfig().height
 
 
 @dataclass(frozen=True)
@@ -57,7 +55,7 @@ class PlayerConfig:
 @dataclass(frozen=True)
 class BulletConfig:
     color: tuple[int, int, int] = Color().yellow
-    radius: int = 5
+    radius: int = 1
     speed: int = 10
 
 
