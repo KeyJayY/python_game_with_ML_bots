@@ -1,17 +1,9 @@
+from map import Map
 from player import Player
 from bots import Bot, BotSprinter
-import json
+
 
 from config import PlayerConfig
-
-
-class Map:
-    def __init__(self, file_name):
-        with open(file_name, "r") as file:
-            data = json.load(file)
-            self.width = data["width"]
-            self.height = data["height"]
-            self.obstacles = data["obstacles"]
 
 
 class Simulation:
@@ -24,8 +16,8 @@ class Simulation:
 
         # Initializing bots
         self.bots: list[Bot] = []
-        for _ in range(10):
-            self.bots.append(Bot(self.player))
+        for _ in range(50):
+            # self.bots.append(Bot(self.player))
             self.bots.append(BotSprinter(self.player))
 
     def run(self):
