@@ -1,18 +1,21 @@
 import numpy as np
 import pygame
+from map import Map
 from player import Player
 from random import randint
 import math as mth
+from icecream import ic
 
-from config import BotConfig, SprinterBotConfig, PlayerConfig, WindowConfig
+from config import BotConfig, MapConfig, SprinterBotConfig, WindowConfig
 
 
 class Bot(Player):
-    def __init__(self, player: Player, config: BotConfig = BotConfig()) -> None:
+    def __init__(self, player: Player) -> None:
         super().__init__()
+        self.config = BotConfig()
         self._player: Player = player
         self.type: str = "default"
-        self.config = config
+        self.obstacles = Map().obstacles
 
         # Choosing where to spawn
         while True:
@@ -62,6 +65,44 @@ class Bot(Player):
         )
         return vector_to_player
 
+    def is_colliding(
+        self,
+        future_x: float,
+        future_y: float,
+    ) -> bool:
+        """
+        If new position is coliding with any obstacle on the map or with the player returns `True`.
+        """
+        bot_rect = pygame.Rect(
+            future_x, future_y, self.config.width, self.config.height
+        )
+
+        # Collisions with obstacles
+        # if self.obstacles:
+        #     for obstacle in self.obstacles:
+        #         obstacle_rect = pygame.Rect(
+        #             obstacle.x, obstacle.y, obstacle.width, obstacle.height
+        #         )
+        #         if bot_rect.colliderect(obstacle_rect):
+        #             return True
+
+        # Collisions with player
+        player_rect = pygame.Rect(
+            self._player.x, self._player.y, self._player.width, self._player.height
+        )
+        if bot_rect.colliderect(player_rect):
+            return True
+
+        return False
+
+    def spawn(self):
+        x = randint(0, MapConfig().width - self.width)
+        self.x = x
+        self.y = 0
+
+    def die(self):
+        self.spawn()
+
     def move_to_player(self):
         vector: np.ndarray = self._get_vector_to_player_parameters(
             self.config.height, self.config.height
@@ -81,13 +122,20 @@ class Bot(Player):
         )
 
         rotated_vector_normalized = rotated_vector / np.linalg.norm(rotated_vector)
-        self.x -= rotated_vector_normalized[0] * self.config.speed
-        self.y -= rotated_vector_normalized[1] * self.config.speed
+        new_x = self.x - rotated_vector_normalized[0] * self.config.speed
+        new_y = self.y - rotated_vector_normalized[1] * self.config.speed
+
+        if self.is_colliding(new_x, new_y):
+            self.die()
+        else:
+            self.x = new_x
+            self.y = new_y
 
 
 class BotSprinter(Bot):
     def __init__(self, player: Player) -> None:
-        super().__init__(player, SprinterBotConfig())
+        super().__init__(player)
+        self.config = SprinterBotConfig()
         self.type: str = "sprinter"
         self.start_time = None
         self.current_speed = 0
@@ -105,40 +153,42 @@ class BotSprinter(Bot):
             ),
         )
 
-    # def move_to_player(self):
-    #     if self.start_time is None or not self.moving:
-    #         self.start_time = pygame.time.get_ticks()
-    #         self.moving = True
-    #     elapsed_time = (pygame.time.get_ticks() - self.start_time) / 1000
+    def move_to_player(self):
+        if self.start_time is None or not self.moving:
+            self.start_time = pygame.time.get_ticks()
+            self.current_speed = 0
+            self.moving = True
+        elapsed_time = (pygame.time.get_ticks() - self.start_time) / 1000
 
-    #     # Acceleration
-    #     # if elapsed_time < self.config.time_to_max_speed:
-    #     #     self.current_speed = self.config.speed * (
-    #     #         elapsed_time / self.config.time_to_max_speed
-    #     #     )
-    #     # else:
-    #     #     self.current_speed = self.config.speed
+        # Acceleration
+        if elapsed_time < self.config.time_to_max_speed:
+            self.current_speed = self.config.speed * (
+                elapsed_time / self.config.time_to_max_speed
+            )
+        else:
+            self.current_speed = self.config.speed
 
-    #     vector: np.ndarray = self._get_vector_to_player_parameters(
-    #         self.config.width, self.config.height
-    #     )
-    #     vector_normalized = vector / np.linalg.norm(vector)
+        vector: np.ndarray = self._get_vector_to_player_parameters(
+            self.config.width, self.config.height
+        )
+        vector_normalized = vector / np.linalg.norm(vector)
 
-    #     new_x = self.x - vector_normalized[0] * self.current_speed
-    #     new_y = self.y - vector_normalized[1] * self.current_speed
+        new_x = self.x - vector_normalized[0] * self.current_speed
+        new_y = self.y - vector_normalized[1] * self.current_speed
 
-    #     current_distance_to_player = np.sqrt(
-    #         (new_x + self.config.width / 2 - self._player.x - self._player.width / 2)
-    #         ** 2
-    #         + (
-    #             new_y
-    #             + self.config.height / 2
-    #             - self._player.y
-    #             - self._player.height / 2
-    #         )
-    #         ** 2
-    #     )
+        if self.is_colliding(new_x, new_y):
+            self.moving = False
+            self.die()
+        else:
+            self.x = new_x
+            self.y = new_y
 
 
-    #     self.x = new_x
-    #     self.y = new_y
+def main() -> None:
+    bot_sprinter = BotSprinter(Player())
+    print()
+    bot_sprinter = Bot(Player())
+
+
+if __name__ == "__main__":
+    main()
