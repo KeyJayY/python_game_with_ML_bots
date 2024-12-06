@@ -41,10 +41,10 @@ class Renderer:
                 self.screen,
                 Color().green,
                 (
-                    obstacle["x"],
-                    obstacle["y"],
-                    obstacle["width"],
-                    obstacle["height"],
+                    obstacle.x,
+                    obstacle.y,
+                    obstacle.width,
+                    obstacle.height,
                 ),
             )
 
