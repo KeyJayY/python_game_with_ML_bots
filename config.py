@@ -37,7 +37,6 @@ class PlayerConfig:
     height: int = 40
     speed: int = 5
     initial_jump_velocity: int = -20
-    
 
     @property
     def radius(self) -> float:
@@ -65,9 +64,12 @@ class BotConfig:
     width: int = 10
     height: int = 10
     speed: float = PlayerConfig().speed * 0.6
-    cell_size = 20
 
     spawn_range: int = 200  # R - r for ring
+
+    @property
+    def cell_size(self) -> int:
+        return self.width
 
     @property
     def radius(self) -> float:
@@ -93,4 +95,12 @@ class SprinterBotConfig(BotConfig):
 
 @dataclass(frozen=True)
 class PhysicsConfig:
-    gravity: float = 1
+    gravity: float = 0
+
+
+def main() -> None:
+    print(1)
+
+
+if __name__ == "__main__":
+    main()
