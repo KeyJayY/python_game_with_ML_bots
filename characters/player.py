@@ -1,4 +1,4 @@
-from config import PlayerConfig, PhysicsConfig
+from config import MapConfig, PlayerConfig, PhysicsConfig
 
 
 class Player:
@@ -7,11 +7,20 @@ class Player:
         self.y = PlayerConfig().start_y
         self.velocity_y: float = 0
         self.is_falling = False
-        self.health=PlayerConfig().health
+        self.health = PlayerConfig().health
+        self.width = PlayerConfig().width
+        self.height = PlayerConfig().height
 
     def move(self, dx, dy):
-        self.x += dx
-        self.y += dy
+        new_x = self.x + dx
+        new_y = self.y + dy
+
+        if (
+            0 <= new_x <= MapConfig().width - self.width
+            and 0 <= new_y <= MapConfig().height - self.height
+        ):
+            self.x = new_x
+            self.y = new_y
 
     def jump(self):
         if not self.is_falling:
