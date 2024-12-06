@@ -1,7 +1,7 @@
 import pygame
 from simulation import Simulation
 from bullet import Bullet
-from config import PlayerConfig, GameConfig, Color
+from config import PlayerConfig, GameConfig, Color, WindowConfig
 
 
 class Renderer:
@@ -10,7 +10,7 @@ class Renderer:
 
         self.simulation = simulation
         self.screen = pygame.display.set_mode(
-            (simulation.map.width, simulation.map.height)
+            (WindowConfig().width, WindowConfig().height)
         )
         self.clock = pygame.time.Clock()
         self.w_pressed = False
@@ -26,10 +26,12 @@ class Renderer:
             (
                 self.simulation.player.x,
                 self.simulation.player.y,
-                PlayerConfig().width,
-                PlayerConfig().height,
+                self.simulation.player.width,
+                self.simulation.player.height,
             ),
         )
+
+        
 
     def draw_bullets(self):
         for bullet in self.simulation.bullets:
@@ -68,8 +70,11 @@ class Renderer:
                 self.a_pressed = True
             elif event.key == pygame.K_d:
                 self.d_pressed = True
+            elif event.key == pygame.K_s:
+                self.s_pressed = True
             elif event.key == pygame.K_w:
-                self.simulation.player.jump()
+                # self.simulation.player.jump()
+                self.w_pressed = True
             elif event.key == pygame.K_SPACE:
                 self.simulation.player.jump()
         elif event.type == pygame.KEYUP:
@@ -77,6 +82,10 @@ class Renderer:
                 self.a_pressed = False
             elif event.key == pygame.K_d:
                 self.d_pressed = False
+            elif event.key == pygame.K_s:
+                self.s_pressed = False
+            elif event.key == pygame.K_w:
+                self.w_pressed = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 self.mouse_pressed = True
@@ -86,11 +95,16 @@ class Renderer:
 
     def player_move(self):
         dx = 0
+        dy = 0
         if self.a_pressed:
             dx -= PlayerConfig().speed
         if self.d_pressed:
             dx += PlayerConfig().speed
-        self.simulation.player.move(dx, 0)
+        if self.w_pressed:
+            dy -= PlayerConfig().speed
+        if self.s_pressed:
+            dy += PlayerConfig().speed
+        self.simulation.player.move(dx, dy)
 
     def run(self):
         while not self.simulation.game_over:
