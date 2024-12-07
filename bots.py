@@ -3,6 +3,8 @@ import pygame
 from player import Player
 from random import randint
 import math as mth
+from bullet import Bullet
+import time
 
 from config import BotConfig, SprinterBotConfig, PlayerConfig, WindowConfig
 

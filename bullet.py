@@ -2,13 +2,21 @@ import pygame
 import math
 import random
 
-from config import PlayerConfig, BulletConfig
+from config import PlayerConfig, BulletConfig,BotConfig
 
 
 class Bullet:
-    def __init__(self, player, mouse_x, mouse_y, mode="single"):
-        self.x = player.x + PlayerConfig().width / 2
-        self.y = player.y + PlayerConfig().height / 2
+    def __init__(self, player, mouse_x, mouse_y, mode="single", type="player"):
+        self.player_width=PlayerConfig().width
+        self.player_height=PlayerConfig().height
+        self.bot_width=BotConfig().width
+        self.bot_height=BotConfig().height
+        if(type=="player"):
+            self.x = player.x + self.player_width/2
+            self.y = player.y + self.player_width/2
+        elif (type=="bot1"):
+            self.x = player.x + self.bot_width/2
+            self.y = player.y + self.bot_width/2
         self.x_direction = mouse_x - self.x
         self.y_direction = mouse_y - self.y
         self.mode=mode

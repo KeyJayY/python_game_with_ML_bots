@@ -22,10 +22,11 @@ class Simulation:
         self.player = Player()
         self.bullets = []
         self.map = Map("map.json")
+        self.bots_bullets=[]
 
         # Initializing bots
         self.bots: list[Bot] = []
-        for _ in range(10):
+        for _ in range(2):
             self.bots.append(Bot(self.player))
             self.bots.append(BotSprinter(self.player))
 
@@ -55,6 +56,10 @@ class Simulation:
             bullet.update()
             if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
                 self.bullets.remove(bullet)
+        for bullet in self.bots_bullets:
+            bullet.update()
+            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
+                self.bots_bullets.remove(bullet)
         self.player.apply_y_movement()
         self.player.apply_gravity()
         self.check_collisions()
