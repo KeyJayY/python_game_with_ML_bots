@@ -21,6 +21,8 @@ class Color:
     blue: tuple[int, int, int] = (0, 0, 255)
     orange: tuple[int, int, int] = (255, 127, 0)
     yellow: tuple[int, int, int] = (255, 255, 0)
+    light_blue: tuple[int, int, int] = (30, 144, 255)
+    white: tuple[int, int, int] = (255, 255, 255)
 
 
 @dataclass(frozen=True)
@@ -35,7 +37,7 @@ class PlayerConfig:
     height: int = 40
     speed: int = 5
     initial_jump_velocity: int = -20
-    
+    health: int = 100
 
     @property
     def radius(self) -> float:
@@ -63,6 +65,7 @@ class BotConfig:
     width: int = 10
     height: int = 10
     speed: float = PlayerConfig().speed * 0.6
+    health: int = 100
 
     spawn_range: int = 200  # R - r for ring
 
@@ -91,3 +94,16 @@ class SprinterBotConfig(BotConfig):
 @dataclass(frozen=True)
 class PhysicsConfig:
     gravity: float = 1
+
+
+@dataclass(frozen=True)
+class HealthBarConfig:
+    height: int = 10
+    width: int = 100
+    x: int = 10
+    y: int = 20
+    offset : int = 40
+    font = None
+    font_size : int = 20
+    
+

@@ -7,6 +7,7 @@ class Player:
         self.y = PlayerConfig().start_y
         self.velocity_y: float = 0
         self.is_falling = False
+        self.health=PlayerConfig().health
 
     def move(self, dx, dy):
         self.x += dx
