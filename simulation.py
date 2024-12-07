@@ -21,7 +21,7 @@ class Simulation:
         self.draw_graphics = True
         self.player = Player()
         self.bullets = []
-        self.map = Map("map.json")
+        self.map = Map("map2.json")
         self.bots_bullets=[]
 
         # Initializing bots
