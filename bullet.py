@@ -20,6 +20,7 @@ class Bullet:
         self.x_direction = mouse_x - self.x
         self.y_direction = mouse_y - self.y
         self.mode=mode
+        self.damage=BulletConfig().damage
         
 
         direction_lenght = math.sqrt(self.x_direction**2 + self.y_direction**2)
@@ -69,3 +70,5 @@ class Bullet:
                 return True
               
         return False
+    
+

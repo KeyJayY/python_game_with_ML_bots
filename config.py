@@ -57,6 +57,7 @@ class BulletConfig:
     color: tuple[int, int, int] = Color().yellow
     radius: int = 1
     speed: int = 10
+    damage: int = 10
 
 
 @dataclass(frozen=True)

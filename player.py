@@ -7,7 +7,7 @@ class Player:
         self.y = PlayerConfig().start_y
         self.velocity_y: float = 0
         self.is_falling = False
-        self.health=PlayerConfig().health
+        self.health = PlayerConfig().health
 
     def move(self, dx, dy):
         self.x += dx
@@ -25,3 +25,17 @@ class Player:
     def apply_gravity(self):
         if self.is_falling:
             self.velocity_y += PhysicsConfig().gravity
+    
+    def rect(self):
+        return[{
+            "x" : self.x,
+            "y" : self.y,
+            "width" : PlayerConfig().width,
+            "height" : PlayerConfig().height
+        }]
+
+    def reduce_health(self,damage):
+        if(self.health - damage < 0):
+            self.health = 0
+        else:
+            self.health -= damage

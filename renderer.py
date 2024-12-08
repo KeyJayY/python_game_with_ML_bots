@@ -86,9 +86,6 @@ class Renderer:
             health=bot.health
             y+=HealthBarConfig.offset
             label=f"Bot {nr+1}: {health} %"
-            # display health for only two bots
-            if nr==2:
-                break
 
     def draw_frame(self):
         self.screen.fill(Color().black)

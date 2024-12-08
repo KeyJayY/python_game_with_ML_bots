@@ -90,6 +90,14 @@ class Bot(Player):
         self.x -= rotated_vector_normalized[0] * BotConfig().speed
         self.y -= rotated_vector_normalized[1] * BotConfig().speed
 
+    def rect(self):
+        return[{
+            "x" : self.x,
+            "y" : self.y,
+            "width" : BotConfig().width,
+            "height" : BotConfig().height
+        }]
+
 
 class BotSprinter(Bot):
     def __init__(self, player: Player) -> None:

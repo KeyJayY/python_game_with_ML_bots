@@ -56,9 +56,18 @@ class Simulation:
             bullet.update()
             if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
                 self.bullets.remove(bullet)
+            else:
+                for bot in self.bots:
+                    if bullet.check_bullet_collision_with_obstacles(bot.rect()):
+                        bot.reduce_health(bullet.damage)
+                        self.bullets.remove(bullet)
+                        break
         for bullet in self.bots_bullets:
             bullet.update()
             if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
+                self.bots_bullets.remove(bullet)
+            elif(bullet.check_bullet_collision_with_obstacles(self.player.rect())):
+                self.player.reduce_health(bullet.damage)
                 self.bots_bullets.remove(bullet)
         self.player.apply_y_movement()
         self.player.apply_gravity()
