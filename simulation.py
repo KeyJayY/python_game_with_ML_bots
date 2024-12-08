@@ -69,6 +69,8 @@ class Simulation:
             elif(bullet.check_bullet_collision_with_obstacles(self.player.rect())):
                 self.player.reduce_health(bullet.damage)
                 self.bots_bullets.remove(bullet)
+                if(len(self.bots)!=0 and bot.health==0):
+                    self.bots.remove(bot)
         self.player.apply_y_movement()
         self.player.apply_gravity()
         self.check_collisions()

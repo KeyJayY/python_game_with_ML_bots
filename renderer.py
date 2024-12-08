@@ -131,7 +131,7 @@ class Renderer:
 
     def bot_shoot(self):
         mouse_x, mouse_y = self.simulation.player.x, self.simulation.player.y
-        if(random.randint(0,4)==1):
+        if(random.randint(0,4)==1 and self.simulation.bots):
             self.simulation.bots_bullets.append(Bullet(self.simulation.bots[0], mouse_x, mouse_y, "single", "bot1"))
 
     def run(self):
