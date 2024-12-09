@@ -1,6 +1,9 @@
 from map.map import Map
 from characters.player import Player
 from characters.bots import Bot, BotSprinter
+import random
+import math
+from characters.bullet import Bullet
 
 from config import PlayerConfig
 
@@ -41,6 +44,17 @@ class Simulation:
     def check_collisions(self):
         self.check_collisions_with_obstacles()
 
+    def bot_shoot(self):
+        if random.randint(0, 4) == 1 and self.bots:
+            direction = math.atan2(
+                self.player.y - self.bots[0].y,
+                self.player.x - self.bots[0].x,
+            )
+            self.bots_bullets.append(Bullet(self.bots[0], direction, "single", "bot1"))
+
+    def player_shoot(self, direction):
+        self.bullets.append(Bullet(self.player, direction, "shotgun"))
+
     def next_step(self):
         for bullet in self.bullets:
             bullet.update()
@@ -59,8 +73,8 @@ class Simulation:
             elif bullet.check_bullet_collision_with_obstacles(self.player.rect()):
                 self.player.reduce_health(bullet.damage)
                 self.bots_bullets.remove(bullet)
-                if len(self.bots) != 0 and bot.health == 0:
-                    self.bots.remove(bot)
+
         self.player.apply_y_movement()
         self.player.apply_gravity()
         self.check_collisions()
+        self.bot_shoot()

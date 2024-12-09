@@ -11,16 +11,10 @@ class Player:
         self.width = PlayerConfig().width
         self.height = PlayerConfig().height
 
-    def move(self, dx, dy):
-        new_x = self.x + dx
-        new_y = self.y + dy
-
-        if (
-            0 <= new_x <= MapConfig().width - self.width
-            and 0 <= new_y <= MapConfig().height - self.height
-        ):
+    def move(self, right: bool):
+        new_x = self.x + PlayerConfig().speed * (1 if right else -1)
+        if 0 <= new_x <= MapConfig().width - self.width:
             self.x = new_x
-            self.y = new_y
 
     def jump(self):
         if not self.is_falling:
@@ -40,7 +34,7 @@ class Player:
         if self.is_falling:
             self.velocity_y += PhysicsConfig().gravity
 
-    def reduce_health(self, damage):
+    def reduce_health(self, damage: float):
         if self.health - damage < 0:
             self.health = 0
         else:
