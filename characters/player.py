@@ -27,6 +27,11 @@ class Player:
             self.velocity_y = PlayerConfig().initial_jump_velocity
             self.is_falling = True
 
+    def rect(self):
+        return [
+            self,
+        ]
+
     def apply_y_movement(self):
         if self.is_falling:
             self.y += self.velocity_y
@@ -34,3 +39,9 @@ class Player:
     def apply_gravity(self):
         if self.is_falling:
             self.velocity_y += PhysicsConfig().gravity
+
+    def reduce_health(self, damage):
+        if self.health - damage < 0:
+            self.health = 0
+        else:
+            self.health -= damage

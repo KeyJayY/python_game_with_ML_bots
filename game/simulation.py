@@ -12,10 +12,11 @@ class Simulation:
         self.player = Player()
         self.bullets = []
         self.map = Map()
+        self.bots_bullets = []
 
         # Initializing bots
         self.bots: list[Bot] = []
-        for _ in range(10):
+        for _ in range(2):
             self.bots.append(Bot(self.player))
             self.bots.append(BotSprinter(self.player))
 
@@ -45,6 +46,21 @@ class Simulation:
             bullet.update()
             if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
                 self.bullets.remove(bullet)
+            else:
+                for bot in self.bots:
+                    if bullet.check_bullet_collision_with_obstacles(bot.rect()):
+                        bot.reduce_health(bullet.damage)
+                        self.bullets.remove(bullet)
+                        break
+        for bullet in self.bots_bullets:
+            bullet.update()
+            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
+                self.bots_bullets.remove(bullet)
+            elif bullet.check_bullet_collision_with_obstacles(self.player.rect()):
+                self.player.reduce_health(bullet.damage)
+                self.bots_bullets.remove(bullet)
+                if len(self.bots) != 0 and bot.health == 0:
+                    self.bots.remove(bot)
         self.player.apply_y_movement()
         self.player.apply_gravity()
         self.check_collisions()

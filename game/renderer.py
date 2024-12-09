@@ -2,6 +2,7 @@ import pygame
 from game.simulation import Simulation
 from characters.bullet import Bullet
 from config import PlayerConfig, GameConfig, Color, HealthBarConfig
+import random
 
 
 class Renderer:
@@ -33,6 +34,10 @@ class Renderer:
 
     def draw_bullets(self):
         for bullet in self.simulation.bullets:
+            bullet.draw(self.screen)
+
+    def draw_bots_bullets(self):
+        for bullet in self.simulation.bots_bullets:
             bullet.draw(self.screen)
 
     def draw_map(self):
@@ -78,6 +83,7 @@ class Renderer:
         self.draw_map()
         self.draw_player()
         self.draw_bullets()
+        self.draw_bots_bullets()
         self.draw_bots()
         self.draw_healths_bars()
         pygame.display.flip()
@@ -114,6 +120,13 @@ class Renderer:
             dx += PlayerConfig().speed
         self.simulation.player.move(dx, 0)
 
+    def bot_shoot(self):
+        mouse_x, mouse_y = self.simulation.player.x, self.simulation.player.y
+        if random.randint(0, 4) == 1 and self.simulation.bots:
+            self.simulation.bots_bullets.append(
+                Bullet(self.simulation.bots[0], mouse_x, mouse_y, "single", "bot1")
+            )
+
     def run(self):
         while not self.simulation.game_over:
             for event in pygame.event.get():
@@ -128,6 +141,7 @@ class Renderer:
                 self.simulation.bullets.append(
                     Bullet(self.simulation.player, mouse_x, mouse_y, "shotgun")
                 )
+            self.bot_shoot()
 
             self.draw_frame()
             self.simulation.next_step()
