@@ -2,20 +2,27 @@ import pygame
 import math
 import random
 
-from config import BulletConfig
+from config import BulletConfig, BotConfig, PlayerConfig
 from map.obstacle import Obstacle
 from characters.player import Player
 
 
 class Bullet:
-    def __init__(self, player: Player, mouse_x, mouse_y, mode="single"):
+
+    def __init__(self, player: Player, mouse_x, mouse_y, mode="single", type="player"):
+        self.player_width = PlayerConfig().width
+        self.player_height = PlayerConfig().height
         self.x = player.x + player.width / 2
         self.y = player.y + player.height / 2
         self.config = BulletConfig()
+        self.damage = BulletConfig().damage
 
         self.x_direction = mouse_x - self.x
         self.y_direction = mouse_y - self.y
         self.mode = mode
+
+        self.bot_width = BotConfig().width
+        self.bot_height = BotConfig().height
 
         direction_lenght = math.sqrt(self.x_direction**2 + self.y_direction**2)
         if direction_lenght != 0:
@@ -29,6 +36,13 @@ class Bullet:
             angle += spread
             self.x_shotgun_direction = math.cos(angle)
             self.y_shotgun_direction = math.sin(angle)
+
+        if type == "player":
+            self.x = player.x + self.player_width / 2
+            self.y = player.y + self.player_width / 2
+        elif type == "bot1":
+            self.x = player.x + self.bot_width / 2
+            self.y = player.y + self.bot_width / 2
 
     def update(self):
         if self.mode == "single":
@@ -47,8 +61,6 @@ class Bullet:
         )
 
     def check_bullet_collision_with_obstacles(self, obstacles: list[Obstacle]):
-        return
-
         bullet_left = self.x - self.config.radius
         bullet_right = self.x + self.config.radius
         bullet_top = self.y - self.config.radius
