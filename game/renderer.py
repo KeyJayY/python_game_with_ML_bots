@@ -100,6 +100,8 @@ class Renderer:
                 self.simulation.player.jump()
             elif event.key == pygame.K_SPACE:
                 self.simulation.player.jump()
+            elif event.key == pygame.K_ESCAPE:
+                self.s_pressed = self.simulation.game_over = True
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 self.a_pressed = False
