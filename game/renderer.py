@@ -1,9 +1,8 @@
 import pygame
-from simulation import Simulation
-from bullet import Bullet
-from config import PlayerConfig, GameConfig, Color
+from game.simulation import Simulation
+from characters.bullet import Bullet
+from config import PlayerConfig, GameConfig, Color, HealthBarConfig
 import random
-from config import PlayerConfig, GameConfig, Color ,HealthBarConfig
 
 
 class Renderer:
@@ -36,6 +35,7 @@ class Renderer:
     def draw_bullets(self):
         for bullet in self.simulation.bullets:
             bullet.draw(self.screen)
+
     def draw_bots_bullets(self):
         for bullet in self.simulation.bots_bullets:
             bullet.draw(self.screen)
@@ -46,46 +46,37 @@ class Renderer:
                 self.screen,
                 Color().green,
                 (
-                    obstacle["x"],
-                    obstacle["y"],
-                    obstacle["width"],
-                    obstacle["height"],
+                    obstacle.x,
+                    obstacle.y,
+                    obstacle.width,
+                    obstacle.height,
                 ),
             )
 
     def draw_bots(self):
         for bot in self.simulation.bots:
             bot.draw_bot(self.screen)
-    
+
     def draw_healths_bars(self):
-        health=self.simulation.player.health
-        font =pygame.font.Font(HealthBarConfig().font,HealthBarConfig.font_size)
-        label=f"Player: {health} %"
-        y=HealthBarConfig().y
-        for nr ,bot in enumerate(self.simulation.bots):
+        health = self.simulation.player.health
+        font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
+        label = f"Player: {health} %"
+        y = HealthBarConfig().y
+        for nr, bot in enumerate(self.simulation.bots):
             self.screen.blit(
-                font.render(
-                    label,
-                    True,Color().white
-                ),
-                (
-                    HealthBarConfig().x,
-                    y-20
-                )
+                font.render(label, True, Color().white), (HealthBarConfig().x, y - 20)
             )
             pygame.draw.rect(
                 self.screen,
                 Color().light_blue,
-                (
-                    HealthBarConfig().x,
-                    y,
-                    health,
-                    HealthBarConfig().height
-                ),
+                (HealthBarConfig().x, y, health, HealthBarConfig().height),
             )
-            health=bot.health
-            y+=HealthBarConfig.offset
-            label=f"Bot {nr+1}: {health} %"
+            health = bot.health
+            y += HealthBarConfig.offset
+            label = f"Bot {nr+1}: {health} %"
+            # display health for only two bots
+            if nr == 2:
+                break
 
     def draw_frame(self):
         self.screen.fill(Color().black)
@@ -96,7 +87,7 @@ class Renderer:
         self.draw_bots()
         self.draw_healths_bars()
         pygame.display.flip()
-    
+
     def handle_mouse_and_keyborad_input(self, event):
         if event.type == pygame.QUIT:
             self.simulation.game_over = True
@@ -131,8 +122,10 @@ class Renderer:
 
     def bot_shoot(self):
         mouse_x, mouse_y = self.simulation.player.x, self.simulation.player.y
-        if(random.randint(0,4)==1 and self.simulation.bots):
-            self.simulation.bots_bullets.append(Bullet(self.simulation.bots[0], mouse_x, mouse_y, "single", "bot1"))
+        if random.randint(0, 4) == 1 and self.simulation.bots:
+            self.simulation.bots_bullets.append(
+                Bullet(self.simulation.bots[0], mouse_x, mouse_y, "single", "bot1")
+            )
 
     def run(self):
         while not self.simulation.game_over:
