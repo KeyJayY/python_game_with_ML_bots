@@ -33,6 +33,13 @@ class MapConfig:
 
 
 @dataclass(frozen=True)
+class DefaultEntityConfig:
+    color: tuple[int, int, int] = (150, 150, 150)
+    width: int = 20
+    height: int = 20
+
+
+@dataclass(frozen=True)
 class PlayerConfig:
     color: tuple[int, int, int] = Color().blue
     width: int = 40

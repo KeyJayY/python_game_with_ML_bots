@@ -1,7 +1,8 @@
 from config import MapConfig, PlayerConfig, PhysicsConfig
+from characters.entity import Entity
 
 
-class Player:
+class Player(Entity):
     def __init__(self):
         self.x = PlayerConfig().start_x
         self.y = PlayerConfig().start_y
@@ -10,6 +11,7 @@ class Player:
         self.health = PlayerConfig().health
         self.width = PlayerConfig().width
         self.height = PlayerConfig().height
+        self.config = PlayerConfig()
 
     def move(self, right: bool):
         new_x = self.x + PlayerConfig().speed * (1 if right else -1)

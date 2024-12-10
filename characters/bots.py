@@ -2,14 +2,16 @@ import numpy as np
 import pygame
 from map.map import Map
 from characters.player import Player
-from random import randint
-import math as mth
+from characters.entity import Entity
+from characters.bullet import Bullet
+from random import randint, random
+import math
 from icecream import ic
 
 from config import BotConfig, MapConfig, SprinterBotConfig, WindowConfig
 
 
-class Bot(Player):
+class Bot(Entity):
     def __init__(self, player: Player) -> None:
         super().__init__()
         self.config = BotConfig()
@@ -43,18 +45,6 @@ class Bot(Player):
                 >= self.config.min_spawn_radius
             ):
                 break
-
-    def draw_bot(self, screen: pygame.Surface) -> None:
-        pygame.draw.rect(
-            screen,
-            self.config.color,
-            (
-                self.x,
-                self.y,
-                self.config.height,
-                self.config.height,
-            ),
-        )
 
     def _get_vector_to_player_parameters(self, bot_width, bot_height) -> np.ndarray:
         vector_to_player: np.ndarray = np.array(
@@ -110,10 +100,10 @@ class Bot(Player):
 
         # Random movement, but most likely towards player
         angle = np.random.normal(0, 80)
-        angle_rad = mth.radians(angle)
+        angle_rad = math.radians(angle)
 
         dx, dy = vector
-        cos_theta, sin_theta = mth.cos(angle_rad), mth.sin(angle_rad)
+        cos_theta, sin_theta = math.cos(angle_rad), math.sin(angle_rad)
         rotated_vector = np.array(
             [
                 dx * cos_theta - dy * sin_theta,
@@ -182,6 +172,26 @@ class BotSprinter(Bot):
         else:
             self.x = new_x
             self.y = new_y
+
+
+class PlayerLikeBot(Player):
+    def __init__(self):
+        super().__init__()
+        self.config = BotConfig()
+        self.x = 100
+        self.y = 30
+        self.going_right = False
+
+    def random_movement(self):
+        if randint(0, 50) == 1:
+            self.going_right = not self.going_right
+        if randint(0, 1):
+            self.move(self.going_right)
+        if randint(0, 10) == 1:
+            self.jump()
+
+    def random_shoot(self):
+        return Bullet(self, random() * 2 * math.pi, "single", "bot1")
 
 
 def main() -> None:

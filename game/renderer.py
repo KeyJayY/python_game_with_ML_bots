@@ -22,16 +22,7 @@ class Renderer:
         self.mouse_pressed = False
 
     def draw_player(self):
-        pygame.draw.rect(
-            self.screen,
-            PlayerConfig().color,
-            (
-                self.simulation.player.x,
-                self.simulation.player.y,
-                PlayerConfig().width,
-                PlayerConfig().height,
-            ),
-        )
+        self.simulation.player.draw(self.screen)
 
     def draw_bullets(self):
         for bullet in self.simulation.bullets:
@@ -56,7 +47,9 @@ class Renderer:
 
     def draw_bots(self):
         for bot in self.simulation.bots:
-            bot.draw_bot(self.screen)
+            bot.draw(self.screen)
+        for bot in self.simulation.player_like_bots:
+            bot.draw(self.screen)
 
     def draw_healths_bars(self):
         health = self.simulation.player.health
@@ -126,9 +119,6 @@ class Renderer:
             for event in pygame.event.get():
                 self.handle_mouse_and_keyborad_input(event)
             self.player_move()
-
-            for bot in self.simulation.bots:
-                bot.move_to_player()
 
             if self.mouse_pressed:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
