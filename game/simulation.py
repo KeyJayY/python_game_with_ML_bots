@@ -56,10 +56,17 @@ class Simulation:
                 self.player.y - self.bots[0].y,
                 self.player.x - self.bots[0].x,
             )
-            self.bullets.append(self.bots[0].shoot(direction))
+            self.bullets.extend(self.bots[0].shoot(direction))
 
     def player_shoot(self, direction: float):
-        self.bullets.append(self.player.shoot(direction, "shotgun"))
+        self.bullets.extend(self.player.shoot(direction, "shotgun"))
+
+    def update_weapon_countdowns(self):
+        self.player.weapon.update_countdown()
+        for bot in self.bots:
+            bot.weapon.update_countdown()
+        for bot in self.player_like_bots:
+            bot.weapon.update_countdown()
 
     def check_bullet_colisions(self, bullet):
         if (
@@ -96,7 +103,8 @@ class Simulation:
         for bot in self.player_like_bots:
             bot.random_movement()
             if random.randint(0, 10) == 1:
-                self.bullets.append(bot.random_shoot())
+                self.bullets.extend(bot.random_shoot())
 
+        self.update_weapon_countdowns()
         self.apply_gravity()
         self.bot_shoot()

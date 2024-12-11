@@ -1,9 +1,11 @@
 from config import MapConfig, PlayerConfig, PhysicsConfig
 from characters.entity import Entity
+from characters.weapon import Gun, Shotgun, Auto
 
 
 class Player(Entity):
     def __init__(self):
+        super().__init__()
         self.x = PlayerConfig().start_x
         self.y = PlayerConfig().start_y
         self.velocity_y: float = 0
@@ -12,6 +14,7 @@ class Player(Entity):
         self.width = PlayerConfig().width
         self.height = PlayerConfig().height
         self.config = PlayerConfig()
+        self.weapon = Shotgun(self)
 
     def move(self, right: bool):
         new_x = self.x + PlayerConfig().speed * (1 if right else -1)

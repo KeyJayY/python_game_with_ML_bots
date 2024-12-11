@@ -8,10 +8,10 @@ from map.obstacle import Obstacle
 
 class Bullet:
 
-    def __init__(self, author, direction, mode="single"):
+    def __init__(self, author, direction, spread_angle=0, offset=0):
         self.author = author
-        self.x = author.x + author.width / 2
-        self.y = author.y + author.height / 2
+        self.x = author.x + author.width / 2 + random.randint(-offset, offset)
+        self.y = author.y + author.height / 2 + random.randint(-offset, offset)
         self.speed = BulletConfig().speed
         self.damage = BulletConfig().damage
         self.radius = BulletConfig().radius
@@ -20,10 +20,8 @@ class Bullet:
         self.bot_width = BotConfig().width
         self.bot_height = BotConfig().height
 
-        if mode == "shotgun":
-            spread_angle = 0.2  # value in radians (1 radian = 57.2958 degrees)
-            self.direction += random.uniform(-spread_angle, spread_angle)
-            self.speed -= 4
+        self.direction += random.uniform(-spread_angle, spread_angle)
+        #     self.speed -= 4
 
     def update(self):
         self.x += math.cos(self.direction) * self.speed

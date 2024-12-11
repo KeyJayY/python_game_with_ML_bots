@@ -1,6 +1,7 @@
 import pygame
 from config import DefaultEntityConfig
 from characters.bullet import Bullet
+from characters.weapon import Gun, Shotgun, Auto
 
 
 class Entity:
@@ -12,6 +13,7 @@ class Entity:
         self.width = DefaultEntityConfig().width
         self.height = DefaultEntityConfig().height
         self.config = DefaultEntityConfig()
+        self.weapon = Auto(self)
 
     def draw(self, screen, offset_x=0, offset_y=0):
         pygame.draw.rect(
@@ -32,8 +34,6 @@ class Entity:
             self.health -= damage
 
     def shoot(self, direction, mode="single"):
-        return Bullet(
-            self,
+        return self.weapon.shoot(
             direction,
-            mode,
         )

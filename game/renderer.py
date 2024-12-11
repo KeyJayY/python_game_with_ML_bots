@@ -54,6 +54,18 @@ class Renderer:
         for bot in self.simulation.player_like_bots:
             bot.draw(self.screen, self.offset_x, self.offset_y)
 
+    def draw_ammo(self):
+        font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
+        label = f"{self.simulation.player.weapon.magazine} / {self.simulation.player.weapon.magazine_capacity}"
+        if self.simulation.player.weapon.realoud_countdown > 0:
+            label = (
+                f"Reload: {self.simulation.player.weapon.realoud_countdown / 60: .2f}"
+            )
+        self.screen.blit(
+            font.render(label, True, Color().white),
+            (WindowConfig().width - 90, 30),
+        )
+
     def draw_healths_bars(self):
         health = self.simulation.player.health
         font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
@@ -82,6 +94,7 @@ class Renderer:
         self.draw_bullets()
         self.draw_bots()
         self.draw_healths_bars()
+        self.draw_ammo()
         pygame.display.flip()
 
     def handle_mouse_and_keyborad_input(self, event):
