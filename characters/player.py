@@ -35,9 +35,3 @@ class Player(Entity):
     def apply_gravity(self):
         if self.is_falling:
             self.velocity_y += PhysicsConfig().gravity
-
-    def reduce_health(self, damage: float):
-        if self.health - damage < 0:
-            self.health = 0
-        else:
-            self.health -= damage

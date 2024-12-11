@@ -4,8 +4,8 @@ import numpy as np
 
 @dataclass(frozen=True)
 class WindowConfig:
-    width: int = 1600
-    height: int = 900
+    width: int = 1400
+    height: int = 800
 
 
 @dataclass(frozen=True)

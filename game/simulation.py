@@ -15,7 +15,6 @@ class Simulation:
         self.player = Player()
         self.bullets = []
         self.map = Map()
-        self.bots_bullets = []
 
         # Initializing bots
         self.bots: list[Bot] = []
@@ -57,29 +56,30 @@ class Simulation:
                 self.player.y - self.bots[0].y,
                 self.player.x - self.bots[0].x,
             )
-            self.bots_bullets.append(Bullet(self.bots[0], direction, "single", "bot1"))
+            self.bullets.append(self.bots[0].shoot(direction))
 
     def player_shoot(self, direction):
-        self.bullets.append(Bullet(self.player, direction, "shotgun"))
+        self.bullets.append(self.player.shoot(direction, "shotgun"))
+
+    def check_bullet_colisions(self, bullet):
+        for obstacle in self.map.obstacles:
+            if bullet.check_bullet_collision_with_object(obstacle):
+                self.bullets.remove(bullet)
+                return
+        for bot in self.bots:
+            if bullet.check_bullet_collision_with_object(bot):
+                bot.reduce_health(bullet.damage)
+                self.bullets.remove(bullet)
+                return
+        if bullet.check_bullet_collision_with_object(self.player):
+            self.player.reduce_health(bullet.damage)
+            self.bullets.remove(bullet)
+            return
 
     def next_step(self):
         for bullet in self.bullets:
             bullet.update()
-            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
-                self.bullets.remove(bullet)
-            else:
-                for bot in self.bots:
-                    if bullet.check_bullet_collision_with_obstacles(bot.rect()):
-                        bot.reduce_health(bullet.damage)
-                        self.bullets.remove(bullet)
-                        break
-        for bullet in self.bots_bullets:
-            bullet.update()
-            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
-                self.bots_bullets.remove(bullet)
-            elif bullet.check_bullet_collision_with_obstacles(self.player.rect()):
-                self.player.reduce_health(bullet.damage)
-                self.bots_bullets.remove(bullet)
+            self.check_bullet_colisions(bullet)
 
         for bot in self.bots:
             bot.move_to_player()
@@ -87,7 +87,7 @@ class Simulation:
         for bot in self.player_like_bots:
             bot.random_movement()
             if random.randint(0, 10) == 1:
-                self.bots_bullets.append(bot.random_shoot())
+                self.bullets.append(bot.random_shoot())
 
         self.apply_gravity()
         self.bot_shoot()

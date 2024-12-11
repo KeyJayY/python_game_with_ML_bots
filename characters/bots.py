@@ -191,7 +191,7 @@ class PlayerLikeBot(Player):
             self.jump()
 
     def random_shoot(self):
-        return Bullet(self, random() * 2 * math.pi, "single", "bot1")
+        return self.shoot(random() * 2 * math.pi)
 
 
 def main() -> None:

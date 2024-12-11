@@ -1,5 +1,6 @@
 import pygame
 from config import DefaultEntityConfig
+from characters.bullet import Bullet
 
 
 class Entity:
@@ -34,3 +35,10 @@ class Entity:
             self.health = 0
         else:
             self.health -= damage
+
+    def shoot(self, direction, mode="single"):
+        return Bullet(
+            self,
+            direction,
+            mode,
+        )

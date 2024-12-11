@@ -28,10 +28,6 @@ class Renderer:
         for bullet in self.simulation.bullets:
             bullet.draw(self.screen)
 
-    def draw_bots_bullets(self):
-        for bullet in self.simulation.bots_bullets:
-            bullet.draw(self.screen)
-
     def draw_map(self):
         for obstacle in self.simulation.map.obstacles:
             pygame.draw.rect(
@@ -77,7 +73,6 @@ class Renderer:
         self.draw_map()
         self.draw_player()
         self.draw_bullets()
-        self.draw_bots_bullets()
         self.draw_bots()
         self.draw_healths_bars()
         pygame.display.flip()
