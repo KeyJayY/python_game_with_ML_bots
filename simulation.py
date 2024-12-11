@@ -1,10 +1,11 @@
 from player import Player
+import floor
 from bots import Bot, BotSprinter
 import json
 from bullet import Bullet
+from entity import Entity
 
 from config import PlayerConfig, BulletConfig
-
 
 class Map:
     def __init__(self, file_name):
@@ -14,7 +15,6 @@ class Map:
             self.height = data["height"]
             self.obstacles = data["obstacles"]
 
-
 class Simulation:
     def __init__(self):
         self.game_over = False
@@ -23,54 +23,54 @@ class Simulation:
         self.bullets = []
         self.map = Map("map2.json")
         self.bots_bullets=[]
+        self.entities: list[Entity] = []
+        
+        for obstacle in self.map.obstacles:
+            self.entities.append(floor.Platform(obstacle))
 
         # Initializing bots
         self.bots: list[Bot] = []
         for _ in range(2):
             self.bots.append(Bot(self.player))
             self.bots.append(BotSprinter(self.player))
+            
+        
+        self.entities.append(self.player)
+        
+        for bot in self.bots:
+            self.entities.append(bot)
 
     def run(self):
         while not self.game_over:
             self.next_step()
 
-    def check_collisions_with_obstacles(self):
-        self.player.is_falling = True
-        for obstacle in self.map.obstacles:
-            if (
-                self.player.x + PlayerConfig().width > obstacle["x"]
-                and self.player.x < obstacle["x"] + obstacle["width"]
-                and self.player.y + PlayerConfig().height <= obstacle["y"]
-                and self.player.y + PlayerConfig().height + self.player.velocity_y
-                >= obstacle["y"]
-            ):
-                self.player.y = obstacle["y"] - PlayerConfig().height
-                self.player.velocity_y = 0
-                self.player.is_falling = False
-
-    def check_collisions(self):
-        self.check_collisions_with_obstacles()
+    def remove_queued_entities(self):
+        temp_ent = []
+        for entity in self.entities:
+            entity.delete_if_too_far()
+            if (not entity.queued_for_deletion):
+                temp_ent.append(entity)
+            elif isinstance(entity,Bot):
+                self.bots.remove(entity)
+            elif entity is self.player:
+                self.game_over = True
+        self.entities.clear()
+        self.entities = temp_ent
+        
+    
+    def update_entities(self):
+        for entity in self.entities:
+            entity.update()
+            
+    def chceck_collisions(self):
+        for entity1 in self.entities:
+            for entity2 in self.entities:
+                if (entity1 != entity2 and
+                    entity1.check_collision(entity2)):
+                    entity1.evaluate_collision(entity2)
 
     def next_step(self):
-        for bullet in self.bullets:
-            bullet.update()
-            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
-                self.bullets.remove(bullet)
-            else:
-                for bot in self.bots:
-                    if bullet.check_bullet_collision_with_obstacles(bot.rect()):
-                        bot.reduce_health(bullet.damage)
-                        self.bullets.remove(bullet)
-                        break
-        for bullet in self.bots_bullets:
-            bullet.update()
-            if bullet.check_bullet_collision_with_obstacles(self.map.obstacles):
-                self.bots_bullets.remove(bullet)
-            elif(bullet.check_bullet_collision_with_obstacles(self.player.rect())):
-                self.player.reduce_health(bullet.damage)
-                self.bots_bullets.remove(bullet)
-                if(len(self.bots)!=0 and bot.health==0):
-                    self.bots.remove(bot)
-        self.player.apply_y_movement()
-        self.player.apply_gravity()
-        self.check_collisions()
+        self.remove_queued_entities()
+        self.update_entities()
+        self.chceck_collisions()
+    

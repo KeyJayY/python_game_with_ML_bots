@@ -1,27 +1,34 @@
 import pygame
 import math
 import random
+import entity as ent
+from bots import Bot
 
 from config import PlayerConfig, BulletConfig,BotConfig
 
 
-class Bullet:
+class Bullet(ent.Entity):
     def __init__(self, player, mouse_x, mouse_y, mode="single", type="player"):
-        self.player_width=PlayerConfig().width
-        self.player_height=PlayerConfig().height
-        self.bot_width=BotConfig().width
-        self.bot_height=BotConfig().height
-        if(type=="player"):
-            self.x = player.x + self.player_width/2
-            self.y = player.y + self.player_width/2
-        elif (type=="bot1"):
-            self.x = player.x + self.bot_width/2
-            self.y = player.y + self.bot_width/2
+        super().__init__()
+        self.shape = BulletConfig().shape
+        self.size = [2*BulletConfig().radius,2*BulletConfig().radius]
+        self.color = BulletConfig().color
+        self.x = player.x 
+        self.y = player.y
+        self.collision_interactions = { ent.Collision_layers.GROUND : ent.Collision_interactions.SACRIFICE,
+                                       ent.Collision_layers.WALL : ent.Collision_interactions.SACRIFICE
+                                       }
+        if isinstance(player,Bot):
+            self.collision_layer = ent.Collision_layers.BULLET_BOT
+            self.collision_interactions[ent.Collision_layers.PLAYER] = ent.Collision_interactions.SACRIFICE
+        else:
+            self.collision_layer = ent.Collision_layers.BULLET
+            self.collision_interactions[ent.Collision_layers.BOT] = ent.Collision_interactions.SACRIFICE
         self.x_direction = mouse_x - self.x
         self.y_direction = mouse_y - self.y
         self.mode=mode
         self.damage=BulletConfig().damage
-        
+
 
         direction_lenght = math.sqrt(self.x_direction**2 + self.y_direction**2)
         if direction_lenght != 0:
@@ -45,13 +52,13 @@ class Bullet:
             self.y += self.y_shotgun_direction * (BulletConfig().speed-4)
 
 
-    def draw(self, screen):
-        pygame.draw.circle(
-            screen,
-            BulletConfig().color,
-            (int(self.x), int(self.y)),
-            BulletConfig().radius,
-        )
+    # def draw(self, screen):
+    #     pygame.draw.circle(
+    #         screen,
+    #         BulletConfig().color,
+    #         (int(self.x), int(self.y)),
+    #         BulletConfig().radius,
+    #     )
     def check_bullet_collision_with_obstacles(self, obstacles):
         bullet_left = self.x - BulletConfig.radius
         bullet_right = self.x + BulletConfig.radius

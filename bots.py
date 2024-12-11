@@ -3,8 +3,8 @@ import pygame
 from player import Player
 from random import randint
 import math as mth
-from bullet import Bullet
 import time
+import entity as ent
 
 from config import BotConfig, SprinterBotConfig, PlayerConfig, WindowConfig
 
@@ -15,7 +15,10 @@ class Bot(Player):
         self._player: Player = player
         self.type: str = "default"
         self.health = BotConfig().health
-
+        self.color = BotConfig().color
+        self.size = BotConfig().size
+        self.collision_layer = ent.Collision_layers.BOT
+        self.collision_interactions = {ent.Collision_layers.BULLET : ent.Collision_interactions.HURT}
         # Choosing where to spawn
         while True:
             self.x: int = randint(-WindowConfig().width, WindowConfig().width)
@@ -23,16 +26,16 @@ class Bot(Player):
             self.spawn_distance_from_player: float = np.sqrt(
                 (
                     self.x
-                    + BotConfig().height / 2
+                    # + self.size[0] / 2
                     - self._player.x
-                    - PlayerConfig().width / 2
+                    # - self._player.size[0] / 2
                 )
                 ** 2
                 + (
                     self.y
-                    + BotConfig().height / 2
+                    + self.size[1] / 2
                     - self._player.y
-                    - PlayerConfig().height / 2
+                    - self._player.size[1] / 2
                 )
                 ** 2
             )
@@ -43,31 +46,32 @@ class Bot(Player):
             ):
                 break
 
-    def draw_bot(self, screen: pygame.Surface) -> None:
-        pygame.draw.rect(
-            screen,
-            BotConfig().color,
-            (
-                self.x,
-                self.y,
-                BotConfig().height,
-                BotConfig().height,
-            ),
-        )
+    # def draw_bot(self, screen: pygame.Surface) -> None:
+    #     pygame.draw.rect(
+    #         screen,
+    #         BotConfig().color,
+    #         (
+    #             self.x,
+    #             self.y,
+    #             BotConfig().height,
+    #             BotConfig().height,
+    #         ),
+    #     )
+    
+    def update(self):
+        self.move_to_player()
 
-    def _get_vector_to_player_parameters(self, bot_width, bot_height) -> np.ndarray:
+    def _get_vector_to_player_parameters(self) -> np.ndarray:
         vector_to_player: np.ndarray = np.array(
             [
-                self.x + bot_width / 2 - (self._player.x + PlayerConfig().width / 2),
-                self.y + bot_height / 2 - (self._player.y + PlayerConfig().height / 2),
+                self.x - self._player.x,
+                self.y - self._player.y,
             ]
         )
         return vector_to_player
 
     def move_to_player(self):
-        vector: np.ndarray = self._get_vector_to_player_parameters(
-            BotConfig().height, BotConfig().height
-        )
+        vector: np.ndarray = self._get_vector_to_player_parameters()
 
         # Random movement, but most likely towards player
         angle = np.random.normal(0, 80)
@@ -94,8 +98,8 @@ class Bot(Player):
         return[{
             "x" : self.x,
             "y" : self.y,
-            "width" : BotConfig().width,
-            "height" : BotConfig().height
+            "width" : self.size[0],
+            "height" : self.size[1]
         }]
 
 
@@ -106,18 +110,21 @@ class BotSprinter(Bot):
         self.start_time = None
         self.current_speed = 0
         self.moving = True
+        self.color = SprinterBotConfig().color
+        self.size = SprinterBotConfig().size
+        self.collision_layer = ent.Collision_layers.BOT
 
-    def draw_bot(self, screen: pygame.Surface) -> None:
-        pygame.draw.rect(
-            screen,
-            SprinterBotConfig().color,
-            (
-                self.x,
-                self.y,
-                SprinterBotConfig().width,
-                SprinterBotConfig().height,
-            ),
-        )
+    # def draw_bot(self, screen: pygame.Surface) -> None:
+    #     pygame.draw.rect(
+    #         screen,
+    #         SprinterBotConfig().color,
+    #         (
+    #             self.x,
+    #             self.y,
+    #             SprinterBotConfig().width,
+    #             SprinterBotConfig().height,
+    #         ),
+    #     )
 
     def move_to_player(self):
         if self.start_time is None or not self.moving:
@@ -133,9 +140,7 @@ class BotSprinter(Bot):
         else:
             self.current_speed = SprinterBotConfig().speed
 
-        vector: np.ndarray = self._get_vector_to_player_parameters(
-            SprinterBotConfig().width, BotConfig().height
-        )
+        vector: np.ndarray = self._get_vector_to_player_parameters()
         vector_normalized = vector / np.linalg.norm(vector)
 
         new_x = self.x - vector_normalized[0] * self.current_speed
@@ -144,16 +149,12 @@ class BotSprinter(Bot):
         current_distance_to_player = np.sqrt(
             (
                 new_x
-                + SprinterBotConfig().width / 2
                 - self._player.x
-                - PlayerConfig().width / 2
             )
             ** 2
             + (
                 new_y
-                + SprinterBotConfig().height / 2
                 - self._player.y
-                - PlayerConfig().height / 2
             )
             ** 2
         )
@@ -168,3 +169,4 @@ class BotSprinter(Bot):
 
         self.x = new_x
         self.y = new_y
+

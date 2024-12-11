@@ -1,6 +1,7 @@
 import pygame
 from simulation import Simulation
 from bullet import Bullet
+import bots
 from config import PlayerConfig, GameConfig, Color
 import random
 from config import PlayerConfig, GameConfig, Color ,HealthBarConfig
@@ -20,42 +21,6 @@ class Renderer:
         self.a_pressed = False
         self.d_pressed = False
         self.mouse_pressed = False
-
-    def draw_player(self):
-        pygame.draw.rect(
-            self.screen,
-            PlayerConfig().color,
-            (
-                self.simulation.player.x,
-                self.simulation.player.y,
-                PlayerConfig().width,
-                PlayerConfig().height,
-            ),
-        )
-
-    def draw_bullets(self):
-        for bullet in self.simulation.bullets:
-            bullet.draw(self.screen)
-    def draw_bots_bullets(self):
-        for bullet in self.simulation.bots_bullets:
-            bullet.draw(self.screen)
-
-    def draw_map(self):
-        for obstacle in self.simulation.map.obstacles:
-            pygame.draw.rect(
-                self.screen,
-                Color().green,
-                (
-                    obstacle["x"],
-                    obstacle["y"],
-                    obstacle["width"],
-                    obstacle["height"],
-                ),
-            )
-
-    def draw_bots(self):
-        for bot in self.simulation.bots:
-            bot.draw_bot(self.screen)
     
     def draw_healths_bars(self):
         health=self.simulation.player.health
@@ -86,17 +51,14 @@ class Renderer:
             health=bot.health
             y+=HealthBarConfig.offset
             label=f"Bot {nr+1}: {health} %"
-
+        
     def draw_frame(self):
         self.screen.fill(Color().black)
-        self.draw_map()
-        self.draw_player()
-        self.draw_bullets()
-        self.draw_bots_bullets()
-        self.draw_bots()
+        for entity in self.simulation.entities:
+            entity.draw(self.screen)
         self.draw_healths_bars()
         pygame.display.flip()
-    
+
     def handle_mouse_and_keyborad_input(self, event):
         if event.type == pygame.QUIT:
             self.simulation.game_over = True
@@ -131,8 +93,8 @@ class Renderer:
 
     def bot_shoot(self):
         mouse_x, mouse_y = self.simulation.player.x, self.simulation.player.y
-        if(random.randint(0,4)==1 and self.simulation.bots):
-            self.simulation.bots_bullets.append(Bullet(self.simulation.bots[0], mouse_x, mouse_y, "single", "bot1"))
+        if(random.randint(0,4)==1 and  self.simulation.bots):
+            self.simulation.entities.append(Bullet(self.simulation.bots[0], mouse_x, mouse_y, "single", "bot1"))
 
     def run(self):
         while not self.simulation.game_over:
@@ -145,11 +107,10 @@ class Renderer:
 
             if self.mouse_pressed:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                self.simulation.bullets.append(
+                self.simulation.entities.append(
                     Bullet(self.simulation.player, mouse_x, mouse_y, "shotgun")
                 )
             self.bot_shoot()
-
             self.draw_frame()
             self.simulation.next_step()
             self.clock.tick(GameConfig().fps)
