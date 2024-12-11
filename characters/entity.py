@@ -5,10 +5,10 @@ from characters.bullet import Bullet
 
 class Entity:
     def __init__(self):
-        self.x = 20
-        self.y = 20
-        self.velocity_y: float = 0
-        self.health = 100
+        self.x = DefaultEntityConfig().start_x
+        self.y = DefaultEntityConfig().start_y
+        self.velocity_y = 0
+        self.health = DefaultEntityConfig().health
         self.width = DefaultEntityConfig().width
         self.height = DefaultEntityConfig().height
         self.config = DefaultEntityConfig()
@@ -24,11 +24,6 @@ class Entity:
                 self.height,
             ),
         )
-
-    def rect(self):
-        return [
-            self,
-        ]
 
     def reduce_health(self, damage: float):
         if self.health - damage < 0:

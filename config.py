@@ -37,6 +37,9 @@ class DefaultEntityConfig:
     color: tuple[int, int, int] = (150, 150, 150)
     width: int = 20
     height: int = 20
+    start_x: int = 20
+    start_y: int = 20
+    health: int = 100
 
 
 @dataclass(frozen=True)
@@ -59,14 +62,6 @@ class PlayerConfig:
     @property
     def start_y(self) -> float:
         return (WindowConfig().height - self.height) / 2
-
-
-@dataclass(frozen=True)
-class BulletConfig:
-    color: tuple[int, int, int] = Color().yellow
-    radius: int = 5
-    speed: int = 15
-    damage: int = 10
 
 
 @dataclass(frozen=True)
@@ -99,6 +94,14 @@ class SprinterBotConfig(BotConfig):
     height: int = 5
     speed: float = 0.95 * PlayerConfig().speed
     time_to_max_speed: int = 3
+
+
+@dataclass(frozen=True)
+class BulletConfig:
+    color: tuple[int, int, int] = Color().yellow
+    radius: int = 5
+    speed: int = 15
+    damage: int = 10
 
 
 @dataclass(frozen=True)

@@ -23,11 +23,6 @@ class Player(Entity):
             self.velocity_y = PlayerConfig().initial_jump_velocity
             self.is_falling = True
 
-    def rect(self):
-        return [
-            self,
-        ]
-
     def apply_y_movement(self):
         if self.is_falling:
             self.y += self.velocity_y

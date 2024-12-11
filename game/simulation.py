@@ -5,16 +5,16 @@ import random
 import math
 from characters.bullet import Bullet
 
-from config import PlayerConfig, MapConfig
+from config import MapConfig
 
 
 class Simulation:
     def __init__(self):
         self.game_over = False
         self.draw_graphics = True
-        self.player = Player()
-        self.bullets = []
-        self.map = Map()
+        self.player: Player = Player()
+        self.bullets: list[Bullet] = []
+        self.map: Map = Map()
 
         # Initializing bots
         self.bots: list[Bot] = []
@@ -28,18 +28,18 @@ class Simulation:
         while not self.game_over:
             self.next_step()
 
-    def check_collisions_with_obstacles(self, player):
-        player.is_falling = True
+    def check_collisions_with_obstacles(self, entity):
+        entity.is_falling = True
         for obstacle in self.map.obstacles:
             if (
-                player.x + player.width > obstacle.x
-                and player.x < obstacle.x + obstacle.width
-                and player.y + player.height <= obstacle.y
-                and player.y + player.height + player.velocity_y >= obstacle.y
+                entity.x + entity.width > obstacle.x
+                and entity.x < obstacle.x + obstacle.width
+                and entity.y + entity.height <= obstacle.y
+                and entity.y + entity.height + entity.velocity_y >= obstacle.y
             ):
-                player.y = obstacle.y - player.height
-                player.velocity_y = 0
-                player.is_falling = False
+                entity.y = obstacle.y - entity.height
+                entity.velocity_y = 0
+                entity.is_falling = False
 
     def apply_gravity(self):
         self.player.apply_y_movement()
@@ -58,7 +58,7 @@ class Simulation:
             )
             self.bullets.append(self.bots[0].shoot(direction))
 
-    def player_shoot(self, direction):
+    def player_shoot(self, direction: float):
         self.bullets.append(self.player.shoot(direction, "shotgun"))
 
     def check_bullet_colisions(self, bullet):

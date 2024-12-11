@@ -1,6 +1,5 @@
 import pygame
 from game.simulation import Simulation
-from characters.bullet import Bullet
 from config import (
     PlayerConfig,
     GameConfig,
@@ -9,7 +8,6 @@ from config import (
     WindowConfig,
     MapConfig,
 )
-import random
 import math
 
 
@@ -150,8 +148,10 @@ class Renderer:
     def run(self):
         while not self.simulation.game_over:
             self.apply_offsets()
+
             for event in pygame.event.get():
                 self.handle_mouse_and_keyborad_input(event)
+
             self.player_move()
 
             if self.mouse_pressed:

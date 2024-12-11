@@ -1,4 +1,3 @@
-import json
 from config import MapConfig
 from map.obstacle import (
     Obstacle,

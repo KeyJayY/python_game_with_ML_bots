@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 
-from config import BulletConfig, BotConfig, PlayerConfig
+from config import BulletConfig, BotConfig
 from map.obstacle import Obstacle
 
 
@@ -16,8 +16,6 @@ class Bullet:
         self.damage = BulletConfig().damage
         self.radius = BulletConfig().radius
         self.direction = direction
-
-        self.mode = mode
 
         self.bot_width = BotConfig().width
         self.bot_height = BotConfig().height
