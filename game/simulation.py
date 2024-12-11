@@ -5,7 +5,7 @@ import random
 import math
 from characters.bullet import Bullet
 
-from config import PlayerConfig
+from config import PlayerConfig, MapConfig
 
 
 class Simulation:
@@ -62,6 +62,15 @@ class Simulation:
         self.bullets.append(self.player.shoot(direction, "shotgun"))
 
     def check_bullet_colisions(self, bullet):
+        if (
+            bullet.x < 0
+            or bullet.x > MapConfig().width
+            or bullet.y < 0
+            or bullet.y > MapConfig().height
+        ):
+            self.bullets.remove(bullet)
+            return
+
         for obstacle in self.map.obstacles:
             if bullet.check_bullet_collision_with_object(obstacle):
                 self.bullets.remove(bullet)
