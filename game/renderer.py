@@ -1,7 +1,14 @@
 import pygame
 from game.simulation import Simulation
 from characters.bullet import Bullet
-from config import PlayerConfig, GameConfig, Color, HealthBarConfig
+from config import (
+    PlayerConfig,
+    GameConfig,
+    Color,
+    HealthBarConfig,
+    WindowConfig,
+    MapConfig,
+)
 import random
 import math
 
@@ -12,7 +19,7 @@ class Renderer:
 
         self.simulation = simulation
         self.screen = pygame.display.set_mode(
-            (simulation.map.width, simulation.map.height)
+            (WindowConfig().width, WindowConfig().height)
         )
         self.clock = pygame.time.Clock()
         self.w_pressed = False
@@ -21,12 +28,14 @@ class Renderer:
         self.d_pressed = False
         self.mouse_pressed = False
 
+        self.apply_offsets()
+
     def draw_player(self):
-        self.simulation.player.draw(self.screen)
+        self.simulation.player.draw(self.screen, self.offset_x, self.offset_y)
 
     def draw_bullets(self):
         for bullet in self.simulation.bullets:
-            bullet.draw(self.screen)
+            bullet.draw(self.screen, self.offset_x, self.offset_y)
 
     def draw_map(self):
         for obstacle in self.simulation.map.obstacles:
@@ -34,8 +43,8 @@ class Renderer:
                 self.screen,
                 Color().green,
                 (
-                    obstacle.x,
-                    obstacle.y,
+                    obstacle.x - self.offset_x,
+                    obstacle.y - self.offset_y,
                     obstacle.width,
                     obstacle.height,
                 ),
@@ -43,9 +52,9 @@ class Renderer:
 
     def draw_bots(self):
         for bot in self.simulation.bots:
-            bot.draw(self.screen)
+            bot.draw(self.screen, self.offset_x, self.offset_y)
         for bot in self.simulation.player_like_bots:
-            bot.draw(self.screen)
+            bot.draw(self.screen, self.offset_x, self.offset_y)
 
     def draw_healths_bars(self):
         health = self.simulation.player.health
@@ -109,19 +118,44 @@ class Renderer:
         if self.d_pressed:
             self.simulation.player.move(True)
 
+    def player_shoot(self):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        direction = math.atan2(
+            mouse_y
+            - (self.simulation.player.y + PlayerConfig().height / 2 - self.offset_y),
+            mouse_x
+            - (self.simulation.player.x + PlayerConfig().width / 2 - self.offset_x),
+        )
+        self.simulation.player_shoot(direction)
+
+    def apply_offsets(self):
+        self.offset_x = (
+            self.simulation.player.x
+            + PlayerConfig().width / 2
+            - WindowConfig().width / 2
+        )
+        self.offset_x = max(
+            0, min(self.offset_x, MapConfig().width - WindowConfig().width)
+        )
+
+        self.offset_y = (
+            self.simulation.player.y
+            + PlayerConfig().height / 2
+            - WindowConfig().height / 2
+        )
+        self.offset_y = max(
+            0, min(self.offset_y, MapConfig().height - WindowConfig().height)
+        )
+
     def run(self):
         while not self.simulation.game_over:
+            self.apply_offsets()
             for event in pygame.event.get():
                 self.handle_mouse_and_keyborad_input(event)
             self.player_move()
 
             if self.mouse_pressed:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                direction = math.atan2(
-                    mouse_y - (self.simulation.player.y + PlayerConfig().height / 2),
-                    mouse_x - (self.simulation.player.x + PlayerConfig().width / 2),
-                )
-                self.simulation.player_shoot(direction)
+                self.player_shoot()
 
             self.draw_frame()
             self.simulation.next_step()

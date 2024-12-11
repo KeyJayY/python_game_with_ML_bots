@@ -31,11 +31,11 @@ class Bullet:
         self.x += math.cos(self.direction) * self.speed
         self.y += math.sin(self.direction) * self.speed
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, screen: pygame.Surface, offset_x=0, offset_y=0):
         pygame.draw.circle(
             screen,
             BulletConfig().color,
-            (int(self.x), int(self.y)),
+            (int(self.x - offset_x), int(self.y - offset_y)),
             BulletConfig().radius,
         )
 

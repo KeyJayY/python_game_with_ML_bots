@@ -13,13 +13,13 @@ class Entity:
         self.height = DefaultEntityConfig().height
         self.config = DefaultEntityConfig()
 
-    def draw(self, screen):
+    def draw(self, screen, offset_x=0, offset_y=0):
         pygame.draw.rect(
             screen,
             self.config.color,
             (
-                self.x,
-                self.y,
+                self.x - offset_x,
+                self.y - offset_y,
                 self.width,
                 self.height,
             ),
