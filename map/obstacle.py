@@ -1,43 +1,46 @@
 from dataclasses import dataclass
-from config import MapConfig, PlayerConfig
+from config import MapConfig, PlayerConfig, ObstacleConfig
+import characters.entity as ent
 
 
-@dataclass
-class Obstacle:
-    x: int = 0
-    y: int = 0
-    width: int = 20
-    height: int = 20
-    floor: int = 0
-
-    def __post_init__(self):
+class Obstacle(ent.Entity):
+    def __init__(self,x = 0,floor = 0):
+        super().__init__()
+        self.x = x + self.width/2
+        self.floor = floor
+        self.config = ObstacleConfig()
+        self.size = [self.width,self.height]
         self.y = (
             MapConfig().height
-            - self.height
+            - self.height/2*3
             - self.floor * (3 * PlayerConfig().height + self.height)
         )
+        self.collision_layer = ent.CollisionLayers.GROUND
 
 
-@dataclass
 class ObstaclePlatformShort(Obstacle):
-    def __post_init__(self):
-        super().__post_init__()
+    def __init__(self, x=0, floor = 0):
+        super().__init__(x,floor)
         self.width: int = 100
+        self.size = [self.width,self.height]
+        self.x = x + self.width/2
 
 
-@dataclass
 class ObstaclePlatformLong(Obstacle):
-    def __post_init__(self):
-        super().__post_init__()
+    def __init__(self, x=0, floor = 0):
+        super().__init__(x,floor)
         self.width: int = 300
+        self.size = [self.width,self.height]
+        self.x = x + self.width/2
 
 
-@dataclass
 class ObstacleFloor(Obstacle):
-    def __post_init__(self):
-        super().__post_init__()
+    def __init__(self, x=0, floor = 0):
+        super().__init__(x,floor)
         self.width = MapConfig().width
-        self.y = MapConfig().height - self.height
+        self.y = MapConfig().height - self.height/2
+        self.size = [self.width,self.height]
+        self.x = x + self.width/2
 
 
 def main() -> None:

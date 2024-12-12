@@ -4,6 +4,7 @@ from characters.bots import Bot, BotSprinter, PlayerLikeBot
 import random
 import math
 from characters.bullet import Bullet
+import characters.entity as ent
 
 from config import MapConfig
 
@@ -19,36 +20,26 @@ class Simulation:
         # Initializing bots
         self.bots: list[Bot] = []
         self.player_like_bots: list[PlayerLikeBot] = []
+        self.entities : list[ent.Entity] = []
+        
+        self.entities.append(self.player)
+        
+        for obstacle in self.map.obstacles:
+            self.entities.append(obstacle)
+        
         for _ in range(2):
-            self.bots.append(Bot(self.player))
-            self.bots.append(BotSprinter(self.player))
-            self.player_like_bots.append(PlayerLikeBot())
+            bot = Bot(self.player)
+            bot_sprinter = BotSprinter(self.player)
+            player_like_bot = PlayerLikeBot()
+            self.bots.append(bot)
+            self.bots.append(bot_sprinter)
+            self.player_like_bots.append(player_like_bot)
+            self.entities.extend((bot,bot_sprinter,player_like_bot))
 
+    
     def run(self):
         while not self.game_over:
             self.next_step()
-
-    def check_collisions_with_obstacles(self, entity):
-        entity.is_falling = True
-        for obstacle in self.map.obstacles:
-            if (
-                entity.x + entity.width > obstacle.x
-                and entity.x < obstacle.x + obstacle.width
-                and entity.y + entity.height <= obstacle.y
-                and entity.y + entity.height + entity.velocity_y >= obstacle.y
-            ):
-                entity.y = obstacle.y - entity.height
-                entity.velocity_y = 0
-                entity.is_falling = False
-
-    def apply_gravity(self):
-        self.player.apply_y_movement()
-        self.player.apply_gravity()
-        self.check_collisions_with_obstacles(self.player)
-        for bot in self.player_like_bots:
-            bot.apply_y_movement()
-            bot.apply_gravity()
-            self.check_collisions_with_obstacles(bot)
 
     def bot_shoot(self):
         if random.randint(0, 4) == 1 and self.bots:
@@ -56,47 +47,53 @@ class Simulation:
                 self.player.y - self.bots[0].y,
                 self.player.x - self.bots[0].x,
             )
-            self.bullets.append(self.bots[0].shoot(direction))
+            self.entities.append(self.bots[0].shoot(direction))
 
     def player_shoot(self, direction: float):
-        self.bullets.append(self.player.shoot(direction, "shotgun"))
+        self.entities.append(self.player.shoot(direction, "shotgun"))
 
-    def check_bullet_colisions(self, bullet):
-        if (
-            bullet.x < 0
-            or bullet.x > MapConfig().width
-            or bullet.y < 0
-            or bullet.y > MapConfig().height
-        ):
-            self.bullets.remove(bullet)
-            return
-
-        for obstacle in self.map.obstacles:
-            if bullet.check_bullet_collision_with_object(obstacle):
-                self.bullets.remove(bullet)
-                return
-        for bot in self.bots:
-            if bullet.check_bullet_collision_with_object(bot):
-                bot.reduce_health(bullet.damage)
-                self.bullets.remove(bullet)
-                return
-        if bullet.check_bullet_collision_with_object(self.player):
-            self.player.reduce_health(bullet.damage)
-            self.bullets.remove(bullet)
-            return
 
     def next_step(self):
-        for bullet in self.bullets:
-            bullet.update()
-            self.check_bullet_colisions(bullet)
-
-        for bot in self.bots:
-            bot.move_to_player()
-
         for bot in self.player_like_bots:
-            bot.random_movement()
             if random.randint(0, 10) == 1:
-                self.bullets.append(bot.random_shoot())
+                self.entities.append(bot.random_shoot())
+                
+        for bot in self.bots:
+            if random.randint(0, 10) == 1:
+                self.entities.append(bot.random_shoot())
 
-        self.apply_gravity()
-        self.bot_shoot()
+        self.update_entities()
+        self.check_collisions()
+        self.remove_queued_entities()
+        
+
+    def check_collisions(self):
+        for entity1 in self.entities:
+            for entity2 in self.entities:
+                if (entity1 != entity2 and
+                    entity1.check_collision(entity2)):
+                    entity1.evaluate_collision(entity2)
+                
+    def update_entities(self):
+        for entity in self.entities:
+            entity.update()
+            
+    def remove_queued_entities(self):
+        temp_ent = []
+        for entity in self.entities:
+            entity.delete_if_too_far()
+            if (not entity.queued_for_deletion):
+                temp_ent.append(entity)
+            elif isinstance(entity,Bot):
+                entity.spawn()
+                temp_ent.append(entity)
+                entity.queued_for_deletion = False
+            elif isinstance(entity,PlayerLikeBot):
+                self.player_like_bots.remove(entity)
+            elif entity is self.player:
+                self.game_over = True
+        self.entities.clear()
+        self.entities = temp_ent
+        
+        
+        

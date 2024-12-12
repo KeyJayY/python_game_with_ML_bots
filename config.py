@@ -100,6 +100,8 @@ class SprinterBotConfig(BotConfig):
 class BulletConfig:
     color: tuple[int, int, int] = Color().yellow
     radius: int = 5
+    width: int = 10
+    height: int = 10
     speed: int = 15
     damage: int = 10
 
@@ -118,3 +120,7 @@ class HealthBarConfig:
     offset: int = 40
     font = None
     font_size: int = 20
+    
+@dataclass(frozen=True)
+class ObstacleConfig:
+    color: tuple[int, int, int] = Color().green

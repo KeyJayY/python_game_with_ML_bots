@@ -2,22 +2,27 @@ import numpy as np
 import pygame
 from map.map import Map
 from characters.player import Player
-from characters.entity import Entity
+import characters.entity as ent
 from characters.bullet import Bullet
 from random import randint, random
 import math
-from icecream import ic
+#from icecream import ic
 
 from config import BotConfig, MapConfig, SprinterBotConfig, WindowConfig
 
 
-class Bot(Entity):
+class Bot(ent.Entity):
     def __init__(self, player: Player) -> None:
         super().__init__()
         self.config = BotConfig()
         self._player: Player = player
         self.type: str = "default"
         self.obstacles = Map().obstacles
+        self.collision_layer = ent.CollisionLayers.BOT
+        self.collision_interactions = {ent.CollisionLayers.BULLET : ent.CollisionInteractions.HURT,
+                                       ent.CollisionLayers.GROUND : ent.CollisionInteractions.SACRIFICE,
+                                       ent.CollisionLayers.PLAYER : ent.CollisionInteractions.SACRIFICE,
+                                       }
 
         # Choosing where to spawn
         while True:
@@ -67,16 +72,7 @@ class Bot(Entity):
             future_x, future_y, self.config.width, self.config.height
         )
 
-        # Collisions with obstacles
-        # if self.obstacles:
-        #     for obstacle in self.obstacles:
-        #         obstacle_rect = pygame.Rect(
-        #             obstacle.x, obstacle.y, obstacle.width, obstacle.height
-        #         )
-        #         if bot_rect.colliderect(obstacle_rect):
-        #             return True
 
-        # Collisions with player
         player_rect = pygame.Rect(
             self._player.x, self._player.y, self._player.width, self._player.height
         )
@@ -120,6 +116,19 @@ class Bot(Entity):
         else:
             self.x = new_x
             self.y = new_y
+            
+    def shoot(self, direction, mode="single"):
+        return Bullet(self,
+            direction,
+            mode,
+            )
+    
+    def random_shoot(self):
+        return self.shoot(random() * 2 * math.pi)
+        
+    def update(self):
+        self.move_to_player()
+
 
 
 class BotSprinter(Bot):
@@ -172,6 +181,9 @@ class BotSprinter(Bot):
         else:
             self.x = new_x
             self.y = new_y
+            
+
+            
 
 
 class PlayerLikeBot(Player):
@@ -181,6 +193,9 @@ class PlayerLikeBot(Player):
         self.x = 100
         self.y = 30
         self.going_right = False
+        self.collision_layer = ent.CollisionLayers.BOT
+        self.collision_interactions = {ent.CollisionLayers.BULLET : ent.CollisionInteractions.HURT,
+                                       ent.CollisionLayers.GROUND : ent.CollisionInteractions.STAND}
 
     def random_movement(self):
         if randint(0, 50) == 1:
@@ -193,6 +208,9 @@ class PlayerLikeBot(Player):
     def random_shoot(self):
         return self.shoot(random() * 2 * math.pi)
 
+    def update(self):
+        self.random_movement()
+        super().update()
 
 def main() -> None:
     bot_sprinter = BotSprinter(Player())

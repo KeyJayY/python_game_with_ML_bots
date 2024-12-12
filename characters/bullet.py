@@ -1,24 +1,37 @@
 import pygame
 import math
 import random
+import characters.entity as ent
 
 from config import BulletConfig, BotConfig
-from map.obstacle import Obstacle
+#from map.obstacle import Obstacle
 
 
-class Bullet:
+class Bullet(ent.Entity):
 
     def __init__(self, author, direction, mode="single"):
+        super().__init__()
         self.author = author
-        self.x = author.x + author.width / 2
-        self.y = author.y + author.height / 2
+        self.x = author.x
+        self.y = author.y
         self.speed = BulletConfig().speed
         self.damage = BulletConfig().damage
         self.radius = BulletConfig().radius
         self.direction = direction
+        self.config = BulletConfig()
+        
+        self.size = [2*self.radius,2*self.radius]
 
         self.bot_width = BotConfig().width
         self.bot_height = BotConfig().height
+        if author.collision_layer == ent.CollisionLayers.PLAYER:
+            self.collision_layer = ent.CollisionLayers.BULLET
+            self.collision_interactions = {ent.CollisionLayers.BOT : ent.CollisionInteractions.SACRIFICE}
+        else:
+            self.collision_layer = ent.CollisionLayers.BULLET_BOT
+            self.collision_interactions = {ent.CollisionLayers.PLAYER : ent.CollisionInteractions.SACRIFICE}
+            
+        self.collision_interactions[ent.CollisionLayers.GROUND] = ent.CollisionInteractions.SACRIFICE
 
         if mode == "shotgun":
             spread_angle = 0.2  # value in radians (1 radian = 57.2958 degrees)
@@ -37,7 +50,7 @@ class Bullet:
             BulletConfig().radius,
         )
 
-    def check_bullet_collision_with_object(self, obj: list[Obstacle]):
+    def check_bullet_collision_with_object(self, obj):
         if self.author == obj:
             return False
         bullet_left = self.x - self.radius
