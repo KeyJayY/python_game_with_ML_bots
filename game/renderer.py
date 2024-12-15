@@ -173,3 +173,8 @@ class Renderer:
             self.draw_frame()
             self.simulation.next_step()
             self.clock.tick(GameConfig().fps)
+
+    @staticmethod
+    def close():
+        pygame.display.quit()
+        pygame.quit()
