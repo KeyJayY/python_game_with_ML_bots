@@ -18,33 +18,33 @@ class Bot(Entity):
         self._player: Player = player
         self.type: str = "default"
         self.obstacles = Map().obstacles
-
+        self.random_spawn()
         # Choosing where to spawn
-        while True:
-            self.x: int = randint(-WindowConfig().width, WindowConfig().width)
-            self.y: int = randint(-WindowConfig().height, WindowConfig().height)
-            self.spawn_distance_from_player: float = np.sqrt(
-                (
-                    self.x
-                    + self.config.height / 2
-                    - self._player.x
-                    - self._player.width / 2
-                )
-                ** 2
-                + (
-                    self.y
-                    + self.config.height / 2
-                    - self._player.y
-                    - self._player.height / 2
-                )
-                ** 2
-            )
-            if (
-                self.config.max_spawn_radius
-                >= self.spawn_distance_from_player
-                >= self.config.min_spawn_radius
-            ):
-                break
+        # while True:
+        #     self.x: int = randint(-WindowConfig().width, WindowConfig().width)
+        #     self.y: int = randint(-WindowConfig().height, WindowConfig().height)
+        #     self.spawn_distance_from_player: float = np.sqrt(
+        #         (
+        #             self.x
+        #             + self.config.height / 2
+        #             - self._player.x
+        #             - self._player.width / 2
+        #         )
+        #         ** 2
+        #         + (
+        #             self.y
+        #             + self.config.height / 2
+        #             - self._player.y
+        #             - self._player.height / 2
+        #         )
+        #         ** 2
+        #     )
+        #     if (
+        #         self.config.max_spawn_radius
+        #         >= self.spawn_distance_from_player
+        #         >= self.config.min_spawn_radius
+        #     ):
+        #         break
 
     def _get_vector_to_player_parameters(self, bot_width, bot_height) -> np.ndarray:
         vector_to_player: np.ndarray = np.array(
@@ -54,6 +54,10 @@ class Bot(Entity):
             ]
         )
         return vector_to_player
+
+    def random_spawn(self):
+        self.x = randint(0, MapConfig().width - self.config.width)
+        self.y = randint(0, MapConfig().height - self.config.height)
 
     def is_colliding(
         self,
@@ -120,10 +124,10 @@ class Bot(Entity):
         else:
             self.x = new_x
             self.y = new_y
-    
+
     def reset(self):
         self.spawn()
-        self.health=BotConfig().health
+        self.health = BotConfig().health
 
 
 class BotSprinter(Bot):
@@ -182,8 +186,6 @@ class PlayerLikeBot(Player):
     def __init__(self):
         super().__init__()
         self.config = BotConfig()
-        self.x = 100
-        self.y = 30
         self.going_right = False
 
     def random_movement(self):

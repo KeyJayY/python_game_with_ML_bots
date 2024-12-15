@@ -1,13 +1,17 @@
 from config import MapConfig, PlayerConfig, PhysicsConfig
 from characters.entity import Entity
 from characters.weapon import Gun, Shotgun, Auto
+from random import randint
+from map.obstacle import Obstacle
 
 
 class Player(Entity):
     def __init__(self):
         super().__init__()
-        self.x = PlayerConfig().start_x
-        self.y = PlayerConfig().start_y
+        self.x = randint(0, MapConfig().width - PlayerConfig().width)
+        self.y = randint(
+            0, MapConfig().height - PlayerConfig().height - Obstacle().height
+        )
         self.velocity_y: float = 0
         self.is_falling = False
         self.health = PlayerConfig().health
