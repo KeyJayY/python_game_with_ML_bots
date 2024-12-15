@@ -68,6 +68,22 @@ class Simulation:
         for bot in self.player_like_bots:
             bot.weapon.update_countdown()
 
+    def remove_dead_bots(self):
+        for bot in self.bots:
+            if bot.health <= 0:
+                self.bots.remove(bot)
+        for bot in self.player_like_bots:
+            if bot.health <= 0:
+                self.player_like_bots.remove(bot)
+
+    def check_game_over(self):
+        if self.player.health <= 0:
+            self.game_over = True
+            print("loose")
+        if not self.bots and not self.player_like_bots:
+            self.game_over = True
+            print("win")
+
     def check_bullet_colisions(self, bullet):
         if (
             bullet.x < 0
@@ -87,6 +103,10 @@ class Simulation:
                 bot.reduce_health(bullet.damage)
                 self.bullets.remove(bullet)
                 return
+        for bot in self.player_like_bots:
+            if bullet.check_bullet_collision_with_object(bot):
+                bot.reduce_health(bullet.damage)
+                self.bullets.remove(bullet)
         if bullet.check_bullet_collision_with_object(self.player):
             self.player.reduce_health(bullet.damage)
             self.bullets.remove(bullet)
@@ -108,9 +128,11 @@ class Simulation:
         self.update_weapon_countdowns()
         self.apply_gravity()
         self.bot_shoot()
+        self.remove_dead_bots()
+        self.check_game_over()
 
     def reset(self):
         self.player.reset()
         for bot in self.bots:
             bot.reset()
-        self.game_over=False
+        self.game_over = False

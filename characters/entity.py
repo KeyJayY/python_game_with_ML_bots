@@ -13,7 +13,7 @@ class Entity:
         self.width = DefaultEntityConfig().width
         self.height = DefaultEntityConfig().height
         self.config = DefaultEntityConfig()
-        self.weapon = Auto(self)
+        self.weapon = Gun(self)
 
     def draw(self, screen, offset_x=0, offset_y=0):
         pygame.draw.rect(
