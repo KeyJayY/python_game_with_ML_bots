@@ -118,3 +118,33 @@ class HealthBarConfig:
     offset: int = 40
     font = None
     font_size: int = 20
+
+
+@dataclass(frozen=True)
+class WeaponConfig:
+    @dataclass(frozen=True)
+    class Gun:
+        bullets_per_shot: int = 1
+        reload_time: int = 30
+        magazine_capacity: int = 10
+        spread_angle: float = 0
+        offset: int = 0
+        time_between_shots: int = 20
+
+    @dataclass(frozen=True)
+    class Shotgun:
+        bullets_per_shot: int = 5
+        reload_time: int = 120
+        magazine_capacity: int = 10
+        spread_angle: float = 0.3
+        offset: int = 5
+        time_between_shots: int = 20
+
+    @dataclass(frozen=True)
+    class Auto:
+        bullets_per_shot: int = 1
+        reload_time: int = 60
+        magazine_capacity: int = 25
+        spread_angle: float = 0.1
+        offset: int = 0
+        time_between_shots: int = 5

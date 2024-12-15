@@ -1,4 +1,5 @@
 from characters.bullet import Bullet
+from config import WeaponConfig
 
 
 class Weapon:
@@ -35,34 +36,34 @@ class Weapon:
 class Gun(Weapon):
     def __init__(self, owner):
         super().__init__(damege=10, owner=owner)
-        self.bullets_per_shot = 1
-        self.magazine_capacity = 10
+        self.bullets_per_shot = WeaponConfig().Gun().bullets_per_shot
+        self.magazine_capacity = WeaponConfig().Gun().magazine_capacity
         self.magazine = self.magazine_capacity
-        self.reload_time = 30
-        self.spread_angle = 0
-        self.offset = 0
-        self.time_between_shots = 20
+        self.offset = WeaponConfig().Gun().offset
+        self.reload_time = WeaponConfig().Gun().reload_time
+        self.spread_angle = WeaponConfig().Gun().spread_angle
+        self.time_between_shots = WeaponConfig().Gun().time_between_shots
 
 
 class Shotgun(Weapon):
     def __init__(self, owner):
         super().__init__(damege=10, owner=owner)
-        self.spread_angle = 0.3
-        self.offset = 5
-        self.bullets_per_shot = 5
-        self.magazine_capacity = 10
+        self.bullets_per_shot = WeaponConfig().Shotgun().bullets_per_shot
+        self.magazine_capacity = WeaponConfig().Shotgun().magazine_capacity
         self.magazine = self.magazine_capacity
-        self.reload_time = 120
-        self.time_between_shots = 20
+        self.offset = WeaponConfig().Shotgun().offset
+        self.reload_time = WeaponConfig().Shotgun().reload_time
+        self.spread_angle = WeaponConfig().Shotgun().spread_angle
+        self.time_between_shots = WeaponConfig().Shotgun().time_between_shots
 
 
 class Auto(Weapon):
     def __init__(self, owner):
         super().__init__(damege=10, owner=owner)
-        self.spread_angle = 0.1
-        self.offset = 0
-        self.bullets_per_shot = 1
-        self.magazine_capacity = 30
+        self.bullets_per_shot = WeaponConfig().Auto().bullets_per_shot
+        self.magazine_capacity = WeaponConfig().Auto().magazine_capacity
         self.magazine = self.magazine_capacity
-        self.reload_time = 60
-        self.time_between_shots = 5
+        self.offset = WeaponConfig().Auto().offset
+        self.reload_time = WeaponConfig().Auto().reload_time
+        self.spread_angle = WeaponConfig().Auto().spread_angle
+        self.time_between_shots = WeaponConfig().Auto().time_between_shots
