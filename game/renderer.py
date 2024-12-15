@@ -72,34 +72,12 @@ class Renderer:
             (WindowConfig().width - 90, 10),
         )
 
-    def draw_healths_bars(self):
-        health = self.simulation.player.health
-        font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
-        label = f"Player: {health} %"
-        y = HealthBarConfig().y
-        for nr, bot in enumerate(self.simulation.bots):
-            self.screen.blit(
-                font.render(label, True, Color().white), (HealthBarConfig().x, y - 20)
-            )
-            pygame.draw.rect(
-                self.screen,
-                Color().light_blue,
-                (HealthBarConfig().x, y, health, HealthBarConfig().height),
-            )
-            health = bot.health
-            y += HealthBarConfig.offset
-            label = f"Bot {nr+1}: {health} %"
-            # display health for only two bots
-            if nr == 2:
-                break
-
     def draw_frame(self):
         self.screen.fill(Color().black)
         self.draw_map()
         self.draw_player()
         self.draw_bullets()
         self.draw_bots()
-        self.draw_healths_bars()
         self.draw_ammo()
         pygame.display.flip()
 

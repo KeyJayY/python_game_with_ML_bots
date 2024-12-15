@@ -111,11 +111,9 @@ class PhysicsConfig:
 
 @dataclass(frozen=True)
 class HealthBarConfig:
-    height: int = 10
-    width: int = 100
-    x: int = 10
-    y: int = 20
-    offset: int = 40
+    height: int = 5
+    width: int = 80
+    y_offset: int = 20
     font = None
     font_size: int = 20
 

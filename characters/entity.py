@@ -2,6 +2,8 @@ import pygame
 from config import DefaultEntityConfig
 from characters.bullet import Bullet
 from characters.weapon import Gun, Shotgun, Auto
+from config import Color
+from config import HealthBarConfig
 
 
 class Entity:
@@ -24,6 +26,16 @@ class Entity:
                 self.y - offset_y,
                 self.width,
                 self.height,
+            ),
+        )
+        pygame.draw.rect(
+            screen,
+            Color().light_blue,
+            (
+                self.x - (HealthBarConfig().width - self.width) / 2 - offset_x,
+                self.y - HealthBarConfig().y_offset - offset_y,
+                self.health / 100 * HealthBarConfig().width,
+                HealthBarConfig().height,
             ),
         )
 
