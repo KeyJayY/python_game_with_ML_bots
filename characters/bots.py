@@ -120,6 +120,10 @@ class Bot(Entity):
         else:
             self.x = new_x
             self.y = new_y
+    
+    def reset(self):
+        self.spawn()
+        self.health=BotConfig().health
 
 
 class BotSprinter(Bot):

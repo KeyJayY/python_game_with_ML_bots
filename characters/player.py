@@ -33,3 +33,11 @@ class Player(Entity):
     def apply_gravity(self):
         if self.is_falling:
             self.velocity_y += PhysicsConfig().gravity
+
+    def reset(self):
+        self.x = PlayerConfig().start_x
+        self.y = PlayerConfig().start_y
+        self.velocity_y: float = 0
+        self.is_falling = False
+        self.health = PlayerConfig().health
+        self.weapon = Shotgun(self)

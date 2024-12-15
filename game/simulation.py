@@ -108,3 +108,9 @@ class Simulation:
         self.update_weapon_countdowns()
         self.apply_gravity()
         self.bot_shoot()
+
+    def reset(self):
+        self.player.reset()
+        for bot in self.bots:
+            bot.reset()
+        self.game_over=False
