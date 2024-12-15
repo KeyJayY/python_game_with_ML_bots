@@ -14,12 +14,22 @@ class Player(Entity):
         self.width = PlayerConfig().width
         self.height = PlayerConfig().height
         self.config = PlayerConfig()
-        self.weapon = Shotgun(self)
+        self.weapons = [
+            Auto(self),
+            Shotgun(self),
+            Gun(self),
+        ]
+        self.weapon = self.weapons[0]
 
     def move(self, right: bool):
         new_x = self.x + PlayerConfig().speed * (1 if right else -1)
         if 0 <= new_x <= MapConfig().width - self.width:
             self.x = new_x
+
+    def change_weapon(self, weapon_index: int):
+        if self.weapon.reload_countdown > 0:
+            self.weapon.reload()
+        self.weapon = self.weapons[weapon_index]
 
     def jump(self):
         if not self.is_falling:

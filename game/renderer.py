@@ -57,13 +57,19 @@ class Renderer:
     def draw_ammo(self):
         font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
         label = f"{self.simulation.player.weapon.magazine} / {self.simulation.player.weapon.magazine_capacity}"
-        if self.simulation.player.weapon.realoud_countdown > 0:
+        if self.simulation.player.weapon.reload_countdown > 0:
             label = (
-                f"Reload: {self.simulation.player.weapon.realoud_countdown / 60: .2f}"
+                f"Reload: {self.simulation.player.weapon.reload_countdown / 60: .2f}"
             )
         self.screen.blit(
             font.render(label, True, Color().white),
             (WindowConfig().width - 90, 30),
+        )
+        self.screen.blit(
+            font.render(
+                f"{type(self.simulation.player.weapon).__name__}", True, Color().white
+            ),
+            (WindowConfig().width - 90, 10),
         )
 
     def draw_healths_bars(self):
@@ -111,6 +117,15 @@ class Renderer:
                 self.simulation.player.jump()
             elif event.key == pygame.K_ESCAPE:
                 self.s_pressed = self.simulation.game_over = True
+            elif event.key == pygame.K_1:
+                self.simulation.player.change_weapon(0)
+            elif event.key == pygame.K_2:
+                self.simulation.player.change_weapon(1)
+            elif event.key == pygame.K_3:
+                self.simulation.player.change_weapon(2)
+            elif event.key == pygame.K_r:
+                self.simulation.player.weapon.reload()
+
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 self.a_pressed = False

@@ -5,11 +5,11 @@ class Weapon:
     def __init__(self, damege, owner):
         self.damege = damege
         self.owner = owner
-        self.realoud_countdown = 0
+        self.reload_countdown = 0
         self.time_between_shots_countdown = 0
 
     def shoot(self, direction):
-        if self.time_between_shots_countdown <= 0 and self.realoud_countdown <= 0:
+        if self.time_between_shots_countdown <= 0 and self.reload_countdown <= 0:
             self.magazine -= self.bullets_per_shot
             if self.magazine <= 0:
                 self.reload()
@@ -23,11 +23,11 @@ class Weapon:
 
     def reload(self):
         self.magazine = self.magazine_capacity
-        self.realoud_countdown = self.reload_time
+        self.reload_countdown = self.reload_time
 
     def update_countdown(self):
-        if self.realoud_countdown > 0:
-            self.realoud_countdown -= 1
+        if self.reload_countdown > 0:
+            self.reload_countdown -= 1
         if self.time_between_shots_countdown > 0:
             self.time_between_shots_countdown -= 1
 
@@ -41,7 +41,7 @@ class Gun(Weapon):
         self.reload_time = 30
         self.spread_angle = 0
         self.offset = 0
-        self.time_between_shots = 10
+        self.time_between_shots = 20
 
 
 class Shotgun(Weapon):
