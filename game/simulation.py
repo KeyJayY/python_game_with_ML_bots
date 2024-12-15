@@ -51,15 +51,16 @@ class Simulation:
             self.check_collisions_with_obstacles(bot)
 
     def bot_shoot(self):
-        if random.randint(0, 4) == 1 and self.bots:
-            direction = math.atan2(
-                self.player.y - self.bots[0].y,
-                self.player.x - self.bots[0].x,
-            )
-            self.bullets.extend(self.bots[0].shoot(direction))
+        for bot in self.bots:
+            if random.randint(0, 4) == 1 and type(bot) != BotSprinter:
+                direction = math.atan2(
+                    self.player.y - bot.y,
+                    self.player.x - bot.x,
+                )
+                self.bullets.extend(bot.shoot(direction))
 
     def player_shoot(self, direction: float):
-        self.bullets.extend(self.player.shoot(direction, "shotgun"))
+        self.bullets.extend(self.player.shoot(direction))
 
     def update_weapon_countdowns(self):
         self.player.weapon.update_countdown()

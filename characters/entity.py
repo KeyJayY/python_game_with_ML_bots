@@ -45,7 +45,7 @@ class Entity:
         else:
             self.health -= damage
 
-    def shoot(self, direction, mode="single"):
+    def shoot(self, direction):
         return self.weapon.shoot(
             direction,
         )
