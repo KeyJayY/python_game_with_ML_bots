@@ -57,15 +57,28 @@ class Environment(gym.Env):
 
         observation=self._get_obs()
 
-        #TODO: implement calculating reward
         reward=self._calculate_reward()
 
         done=self.simulation.game_over
 
         return observation, reward, done, {}
     
+
     def _calculate_reward(self):
-        pass
+        reward=0
+        #TODO implement rewards for shooting and moving
+        for bot in self.simulation.bots[:2]:
+            if bot.health<=0:
+                reward-=(100-bot.health) * 0.3
+                continue
+        for bot in self.simulation.bots[:2]:
+            if bot.is_colliding(self.simulation.player.x, self.simulation.player.y):
+                reward-=10
+                continue
+        if self.simulation.player.health<100:
+            reward+=(100-self.simulation.player.health) * 0.3
+        return reward
+
 
     def render(self):
         if self.render_mode == 'human':
