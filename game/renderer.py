@@ -28,32 +28,6 @@ class Renderer:
 
         self.apply_offsets()
 
-    def draw_player(self):
-        self.simulation.player.draw(self.screen, self.offset_x, self.offset_y)
-
-    def draw_bullets(self):
-        for bullet in self.simulation.bullets:
-            bullet.draw(self.screen, self.offset_x, self.offset_y)
-
-    def draw_map(self):
-        for obstacle in self.simulation.map.obstacles:
-            pygame.draw.rect(
-                self.screen,
-                Color().green,
-                (
-                    obstacle.x - self.offset_x,
-                    obstacle.y - self.offset_y,
-                    obstacle.width,
-                    obstacle.height,
-                ),
-            )
-
-    def draw_bots(self):
-        for bot in self.simulation.bots:
-            bot.draw(self.screen, self.offset_x, self.offset_y)
-        for bot in self.simulation.player_like_bots:
-            bot.draw(self.screen, self.offset_x, self.offset_y)
-
     def draw_ammo(self):
         font = pygame.font.Font(HealthBarConfig().font, HealthBarConfig.font_size)
         label = f"{self.simulation.player.weapon.magazine} / {self.simulation.player.weapon.magazine_capacity}"
@@ -74,10 +48,8 @@ class Renderer:
 
     def draw_frame(self):
         self.screen.fill(Color().black)
-        self.draw_map()
-        self.draw_player()
-        self.draw_bullets()
-        self.draw_bots()
+        for entity in self.simulation.entities:
+            entity.draw(self.screen, self.offset_x, self.offset_y)
         self.draw_ammo()
         pygame.display.flip()
 
