@@ -81,11 +81,11 @@ class Entity:
         collision_response = self.collision_interactions[other_layer]
         
         if CollisionInteractions.STAND in collision_response:
-            self.is_falling = False
-            self.velocity_y = 0
-            if (other.y - self.y -self.size[1]/2-other.size[1]/2 <0):
-                push_force = 10
-                self.y -= min(push_force,-(other.y - self.y  -self.size[1]/2-other.size[1]/2))
+            if ((self.y -self.velocity_y)+self.size[1]/2 <= other.y - other.size[1]/2):
+                self.y = other.y-other.size[1]/2-self.size[1]/2
+                self.is_falling = False
+                self.velocity_y = 0
+
 
         
         if CollisionInteractions.HURT in collision_response:
