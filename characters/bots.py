@@ -20,11 +20,10 @@ class Bot(ent.Entity):
         self._player: Player = player
         self.type: str = "default"
         self.obstacles = Map().obstacles
-        self.collision_layer = ent.CollisionLayers.BOT
+        self.collision_layer = ent.CollisionLayers.ACTOR
         self.collision_interactions = {
             ent.CollisionLayers.BULLET: ent.CollisionInteractions.HURT,
-            ent.CollisionLayers.GROUND: ent.CollisionInteractions.SACRIFICE,
-            ent.CollisionLayers.PLAYER: ent.CollisionInteractions.SACRIFICE,
+            ent.CollisionLayers.ACTOR: ent.CollisionInteractions.SACRIFICE,
         }
         self.weapon = Gun(self)
 
@@ -200,7 +199,7 @@ class PlayerLikeBot(Player):
         super().__init__()
         self.config = BotConfig()
         self.going_right = False
-        self.collision_layer = ent.CollisionLayers.BOT
+        self.collision_layer = ent.CollisionLayers.ACTOR
         self.collision_interactions = {
             ent.CollisionLayers.BULLET: ent.CollisionInteractions.HURT,
             ent.CollisionLayers.GROUND: ent.CollisionInteractions.STAND,

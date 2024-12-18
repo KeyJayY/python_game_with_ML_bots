@@ -24,16 +24,10 @@ class Bullet(ent.Entity):
 
         self.bot_width = BotConfig().width
         self.bot_height = BotConfig().height
-        if author.collision_layer == ent.CollisionLayers.PLAYER:
-            self.collision_layer = ent.CollisionLayers.BULLET
-            self.collision_interactions = {
-                ent.CollisionLayers.BOT: ent.CollisionInteractions.SACRIFICE
-            }
-        else:
-            self.collision_layer = ent.CollisionLayers.BULLET_BOT
-            self.collision_interactions = {
-                ent.CollisionLayers.PLAYER: ent.CollisionInteractions.SACRIFICE
-            }
+        self.collision_layer = ent.CollisionLayers.BULLET
+        self.collision_interactions = {
+            ent.CollisionLayers.ACTOR: ent.CollisionInteractions.DESTROY
+        }
 
         self.collision_interactions[ent.CollisionLayers.GROUND] = (
             ent.CollisionInteractions.SACRIFICE

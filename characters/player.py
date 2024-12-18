@@ -28,10 +28,10 @@ class Player(ent.Entity):
         self.weapon = self.weapons[0]
         self.color = PlayerConfig().color
         self.size = [self.width, self.height]
-        self.collision_layer = ent.CollisionLayers.PLAYER
+        self.collision_layer = ent.CollisionLayers.ACTOR
         self.collision_interactions = {
             ent.CollisionLayers.GROUND: ent.CollisionInteractions.STAND,
-            ent.CollisionLayers.BULLET_BOT: ent.CollisionInteractions.HURT,
+            ent.CollisionLayers.BULLET: ent.CollisionInteractions.HURT,
         }
 
     def move(self, right: bool):

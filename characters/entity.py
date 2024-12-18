@@ -11,11 +11,9 @@ from config import HealthBarConfig
 class CollisionLayers(Flag):
     NONE = 0
     GROUND = 1
-    PLAYER = 2
-    BOT = 4
-    BULLET = 8
-    BULLET_BOT = 16
-    WALL = 32
+    ACTOR = 2
+    BULLET = 4
+    WALL = 8
 
 
 class CollisionInteractions(Flag):
@@ -23,7 +21,8 @@ class CollisionInteractions(Flag):
     STAND = 1
     HURT = 2
     SACRIFICE = 4
-    BLOCK = 8
+    DESTROY = 8
+    BLOCK = 16
 
 
 class Entity:
@@ -52,10 +51,10 @@ class Entity:
             screen,
             self.config.color,
             (
-                self.x - self.size[0] / 2 - offset_x,
-                self.y - self.size[1] / 2 - offset_y,
-                self.size[0],
-                self.size[1],
+                self.x - self.width / 2 - offset_x,
+                self.y - self.height / 2 - offset_y,
+                self.width,
+                self.height,
             ),
         )
         pygame.draw.rect(
@@ -77,17 +76,15 @@ class Entity:
             self.health -= damage
 
     def shoot(self, direction):
-        return self.weapon.shoot(
-            direction,
-        )
+        return self.weapon.shoot(direction)
 
     def update(self):
         pass
 
     def check_collision(self, other):
         return (
-            abs(self.x - other.x) <= self.size[0] / 2 + other.size[0] / 2
-            and abs(self.y - other.y) <= self.size[1] / 2 + other.size[1] / 2
+            abs(self.x - other.x) <= self.width / 2 + other.width / 2
+            and abs(self.y - other.y) <= self.height / 2 + other.height / 2
         )
 
     def evaluate_collision(self, other):
@@ -105,10 +102,15 @@ class Entity:
                 self.velocity_y = 0
 
         if CollisionInteractions.HURT in collision_response:
-            self.reduce_health(other.damage)
+            if other.author != self:
+                self.reduce_health(other.damage)
 
         if CollisionInteractions.SACRIFICE in collision_response:
             self.queued_for_deletion = True
+
+        if CollisionInteractions.DESTROY in collision_response:
+            if self.author != other:
+                self.queued_for_deletion = True
 
         if CollisionInteractions.BLOCK in collision_response:
             pass

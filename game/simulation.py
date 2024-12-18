@@ -52,6 +52,14 @@ class Simulation:
     def player_shoot(self, direction: float):
         self.entities.extend(self.player.shoot(direction))
 
+    def check_if_win(self):
+        if len(self.bots) == 0 and len(self.player_like_bots) == 0:
+            self.game_over = True
+            print("You win!")
+        if self.player.health <= 0:
+            self.game_over = True
+            print(" You lose!")
+
     def next_step(self):
         for bot in self.player_like_bots:
             if random.randint(0, 10) == 1:
@@ -69,6 +77,7 @@ class Simulation:
         self.player.weapon.update_countdown()
         for bot in self.player_like_bots:
             bot.weapon.update_countdown()
+        self.check_if_win()
 
     def check_collisions(self):
         for entity1 in self.entities:
@@ -86,13 +95,9 @@ class Simulation:
             entity.delete_if_too_far()
             if not entity.queued_for_deletion:
                 temp_ent.append(entity)
-            elif isinstance(entity, Bot):
-                entity.spawn()
-                temp_ent.append(entity)
-                entity.queued_for_deletion = False
             elif isinstance(entity, PlayerLikeBot):
                 self.player_like_bots.remove(entity)
-            elif entity is self.player:
-                self.game_over = True
+            elif isinstance(entity, Bot):
+                self.bots.remove(entity)
         self.entities.clear()
         self.entities = temp_ent
