@@ -57,12 +57,8 @@ class Player(ent.Entity):
         if self.is_falling:
             self.velocity_y += PhysicsConfig().gravity
 
-    def shoot(self, direction, mode="single"):
-        return Bullet(
-            self,
-            direction,
-            mode,
-        )
+    def shoot(self, direction):
+        return self.weapon.shoot(direction)
 
     def update(self):
         self.apply_y_movement()

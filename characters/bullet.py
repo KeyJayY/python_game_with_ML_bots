@@ -9,11 +9,11 @@ from config import BulletConfig, BotConfig
 
 
 class Bullet(ent.Entity):
-
     def __init__(self, author, direction, spread_angle=0, offset=0):
+        super().__init__()
         self.author = author
-        self.x = author.x + author.width / 2 + random.randint(-offset, offset)
-        self.y = author.y + author.height / 2 + random.randint(-offset, offset)
+        self.x = author.x + random.randint(-offset, offset)
+        self.y = author.y + random.randint(-offset, offset)
         self.speed = BulletConfig().speed
         self.damage = BulletConfig().damage
         self.radius = BulletConfig().radius

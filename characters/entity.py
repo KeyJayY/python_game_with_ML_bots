@@ -1,8 +1,11 @@
 import pygame
 from config import DefaultEntityConfig, MapConfig
 
-# from characters.bullet import Bullet
 from enum import Enum, Flag
+from config import DefaultEntityConfig
+
+from config import Color
+from config import HealthBarConfig
 
 
 class CollisionLayers(Flag):
@@ -23,13 +26,6 @@ class CollisionInteractions(Flag):
     BLOCK = 8
 
 
-from config import DefaultEntityConfig
-from characters.bullet import Bullet
-from characters.weapon import Gun, Shotgun, Auto
-from config import Color
-from config import HealthBarConfig
-
-
 class Entity:
     def __init__(self):
         self.x = DefaultEntityConfig().start_x
@@ -39,7 +35,7 @@ class Entity:
         self.width = DefaultEntityConfig().width
         self.height = DefaultEntityConfig().height
         self.config = DefaultEntityConfig()
-        self.weapon = Gun(self)
+
         self.size = [self.width, self.height]
 
         self.collision_layer = CollisionLayers.NONE
@@ -66,18 +62,8 @@ class Entity:
             screen,
             Color().light_blue,
             (
-                self.x - (HealthBarConfig().width - self.width) / 2 - offset_x,
-                self.y - HealthBarConfig().y_offset - offset_y,
-                self.health / 100 * HealthBarConfig().width,
-                HealthBarConfig().height,
-            ),
-        )
-        pygame.draw.rect(
-            screen,
-            Color().light_blue,
-            (
-                self.x - (HealthBarConfig().width - self.width) / 2 - offset_x,
-                self.y - HealthBarConfig().y_offset - offset_y,
+                self.x - (HealthBarConfig().width) / 2 - offset_x,
+                self.y - HealthBarConfig().y_offset - self.height / 2 - offset_y,
                 self.health / 100 * HealthBarConfig().width,
                 HealthBarConfig().height,
             ),

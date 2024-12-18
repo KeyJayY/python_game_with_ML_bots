@@ -6,6 +6,7 @@ import characters.entity as ent
 from characters.bullet import Bullet
 from random import randint, random
 import math
+from characters.weapon import Gun
 
 # from icecream import ic
 
@@ -25,6 +26,7 @@ class Bot(ent.Entity):
             ent.CollisionLayers.GROUND: ent.CollisionInteractions.SACRIFICE,
             ent.CollisionLayers.PLAYER: ent.CollisionInteractions.SACRIFICE,
         }
+        self.weapon = Gun(self)
 
         self.random_spawn()
         # Choosing where to spawn
@@ -123,12 +125,8 @@ class Bot(ent.Entity):
             self.x = new_x
             self.y = new_y
 
-    def shoot(self, direction, mode="single"):
-        return Bullet(
-            self,
-            direction,
-            mode,
-        )
+    def shoot(self, direction):
+        return self.weapon.shoot(direction)
 
     def random_shoot(self):
         return self.shoot(random() * 2 * math.pi)

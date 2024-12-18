@@ -50,20 +50,25 @@ class Simulation:
                 self.bullets.extend(bot.shoot(direction))
 
     def player_shoot(self, direction: float):
-        self.entities.append(self.player.shoot(direction, "shotgun"))
+        self.entities.extend(self.player.shoot(direction))
 
     def next_step(self):
         for bot in self.player_like_bots:
             if random.randint(0, 10) == 1:
-                self.entities.append(bot.random_shoot())
+                self.entities.extend(bot.random_shoot())
 
         for bot in self.bots:
             if random.randint(0, 10) == 1:
-                self.entities.append(bot.random_shoot())
+                self.entities.extend(bot.random_shoot())
 
         self.update_entities()
         self.check_collisions()
         self.remove_queued_entities()
+        for bot in self.bots:
+            bot.weapon.update_countdown()
+        self.player.weapon.update_countdown()
+        for bot in self.player_like_bots:
+            bot.weapon.update_countdown()
 
     def check_collisions(self):
         for entity1 in self.entities:
