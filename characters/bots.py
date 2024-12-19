@@ -23,7 +23,7 @@ class Bot(ent.Entity):
         self.collision_layer = ent.CollisionLayers.ACTOR
         self.collision_interactions = {
             ent.CollisionLayers.BULLET: ent.CollisionInteractions.HURT,
-            ent.CollisionLayers.ACTOR: ent.CollisionInteractions.SACRIFICE,
+            # ent.CollisionLayers.ACTOR: ent.CollisionInteractions.SACRIFICE,
         }
         self.weapon = Gun(self)
 
@@ -119,7 +119,8 @@ class Bot(ent.Entity):
         new_y = self.y - rotated_vector_normalized[1] * self.config.speed
 
         if self.is_colliding(new_x, new_y):
-            self.die()
+            pass
+            # self.die()
         else:
             self.x = new_x
             self.y = new_y
@@ -187,8 +188,9 @@ class BotSprinter(Bot):
         new_y = self.y - vector_normalized[1] * self.current_speed
 
         if self.is_colliding(new_x, new_y):
+            pass
             self.moving = False
-            self.die()
+            # self.die()
         else:
             self.x = new_x
             self.y = new_y

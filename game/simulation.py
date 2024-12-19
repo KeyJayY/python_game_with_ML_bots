@@ -5,6 +5,7 @@ import random
 import math
 from characters.bullet import Bullet
 import characters.entity as ent
+import numpy as np
 
 from config import MapConfig
 
@@ -101,3 +102,30 @@ class Simulation:
                 self.bots.remove(entity)
         self.entities.clear()
         self.entities = temp_ent
+
+    # get info functions for machine learning
+    def get_enemies(self):
+        data1 = [[bot.x, bot.y, bot.width, bot.height, bot.health] for bot in self.bots]
+        data2 = [
+            [bot.x, bot.y, bot.width, bot.height, bot.health]
+            for bot in self.player_like_bots
+        ]
+
+        return np.array(data1 + data2, dtype=np.float32)
+
+    def get_obstacles(self):
+        return np.array(
+            [
+                [obstacle.x, obstacle.y, obstacle.width, obstacle.height]
+                for obstacle in self.map.obstacles
+            ],
+            dtype=np.float32,
+        )
+
+    def get_actor(self):
+        return {
+            "position": np.array([self.player.x, self.player.y], dtype=np.float32),
+            "health": self.player.health,
+            "ammo": self.player.ammo,
+            "isReloading": self.player.is_reloading(),
+        }

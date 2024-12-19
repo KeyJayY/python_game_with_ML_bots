@@ -60,6 +60,9 @@ class Player(ent.Entity):
     def shoot(self, direction):
         return self.weapon.shoot(direction)
 
+    def is_reloading(self):
+        return 1 if self.weapon.reload_countdown > 0 else 0
+
     def update(self):
         self.apply_y_movement()
         self.apply_gravity()

@@ -21,8 +21,7 @@ class CollisionInteractions(Flag):
     STAND = 1
     HURT = 2
     SACRIFICE = 4
-    DESTROY = 8
-    BLOCK = 16
+    BLOCK = 8
 
 
 class Entity:
@@ -45,6 +44,9 @@ class Entity:
         self.is_falling: bool = False
         self.damage = 0
         self.mass = 1
+        self.last_frame_bullet_hit = False
+        self.last_frame_bullet_kill = False
+        self.get_hit_last_frame = False
 
     def draw(self, screen, offset_x=0, offset_y=0):
         pygame.draw.rect(
@@ -103,12 +105,13 @@ class Entity:
 
         if CollisionInteractions.HURT in collision_response:
             if other.author != self:
+                self.get_hit_last_frame = True
+                other.author.last_frame_bullet_hit = True
                 self.reduce_health(other.damage)
+                if self.health <= 0:
+                    other.author.last_frame_bullet_kill = True
 
         if CollisionInteractions.SACRIFICE in collision_response:
-            self.queued_for_deletion = True
-
-        if CollisionInteractions.DESTROY in collision_response:
             if self.author != other:
                 self.queued_for_deletion = True
 

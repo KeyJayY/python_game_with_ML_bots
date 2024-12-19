@@ -26,7 +26,7 @@ class Bullet(ent.Entity):
         self.bot_height = BotConfig().height
         self.collision_layer = ent.CollisionLayers.BULLET
         self.collision_interactions = {
-            ent.CollisionLayers.ACTOR: ent.CollisionInteractions.DESTROY
+            ent.CollisionLayers.ACTOR: ent.CollisionInteractions.SACRIFICE
         }
 
         self.collision_interactions[ent.CollisionLayers.GROUND] = (

@@ -1,90 +1,126 @@
 import gym
-from gym.spaces import Discrete,Box,Tuple,Dict
+from gym.spaces import Discrete, Box, Tuple, Dict
 import numpy as np
 from game.simulation import Simulation
 from game.renderer import Renderer
 
+
 class Environment(gym.Env):
     metadata = {"render_modes": ["human"]}
 
-    def __init__(self,render_mode=None):
-        self.simulation=Simulation()
+    def __init__(self, render_mode=None):
+        self.simulation = Simulation()
         self.renderer = Renderer(self.simulation)
+        self.max_obstacles = 20
+        self.max_enemies = 10
 
-        # Movement actions: none, left, right, jump
-        # Shoot actions: vector[dx,dy] in range [-1,1]
-        self.action_space=Tuple((Discrete(4),Box(low=-1.0,high=1.0,shape=(2,),dtype=np.float32)))
-        
-        self.observation_space=Tuple([
-            Dict(
-                {
-                "position": Box(low=-np.inf,high=np.inf,shape=(2,),dtype=np.float32),# (x,y)
-                "is_alive": Discrete(2), # 0 or 1
-                "health": Box(low=0,high=100,shape=(1,),dtype=np.float32), # health 0-100%
-                #TODO: maybe add another observation ?
-                }
-            )
-        ]*2)
+        # Movement actions
+        self.action_space = Dict(
+            {
+                "move": Discrete(3),  # 0: no move, 1: right 2: left
+                "jump": Discrete(2),  # 0: no jump, 1: jum
+                "shoot": Discrete(2),  # 0: no shoot, 1: shoot
+                "shoot_angle": Box(
+                    low=0, high=2 * 3.14159, shape=(), dtype=float
+                ),  # shoot angle (0, 2pi)
+            }
+        )
+
+        self.observation_space = Dict(
+            {
+                "actor": Dict(
+                    {
+                        "position": Box(
+                            low=-np.inf, high=np.inf, shape=(2,), dtype=np.float32
+                        ),  # (x, y)
+                        "health": Box(low=0, high=100, shape=(), dtype=np.float32),
+                        "ammo": Box(low=0, high=100, shape=(), dtype=np.float32),
+                        "isReloading": Discrete(2),  #  0 or 1
+                    }
+                ),
+                "obstacles": Box(
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=(self.max_obstacles, 4),
+                    dtype=np.float32,
+                ),  # (x, y, height, width)
+                "enemies": Box(
+                    low=-np.inf,
+                    high=np.inf,
+                    shape=(self.max_enemies, 5),
+                    dtype=np.float32,
+                ),  # (x, y, height, width, health)
+            }
+        )
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
-        self.render_mode=render_mode
+        self.render_mode = render_mode
 
     def _get_obs(self):
-        bots = self.simulation.bots[:2]
-        obs=[]
-        for bot in bots:
-            obs.append(
-                {
-                    "position": np.array([bot.x,bot.y],dtype=np.float32),
-                    "is_alive": 1 if bot.health > 0 else 0,
-                    "health": np.array([bot.health],dtype=np.float32),
-                }
-            )
+        obs = {
+            "actor": self.simulation.get_actor(),
+            "obstacles": self.simulation.get_obstacles(),
+            "enemies": self.simulation.get_enemies(),
+        }
         return obs
-    
-    def reset(self,seed=None,options=None):
+
+    def reset(self, seed=None, options=None):
         super().reset(seed=seed)
-        self.simulation.reset()
+        self.simulation = Simulation()
         observation = self._get_obs()
         return observation, {}
-    
-    def step(self,action):
 
-        move,shoot=action
-        #TODO: implement performing action by agent
+    def step(self, action):
+        move = action["move"]
+        jump = action["jump"]
+        shoot = action["shoot"]
+        shoot_angle = action["shoot_angle"]
 
-        #TODO: next step
+        if move == 1:
+            self.simulation.player.move(True)
+        elif move == 2:
+            self.simulation.player.move(False)
 
-        observation=self._get_obs()
+        if jump == 1:
+            self.simulation.player.jump()
 
-        reward=self._calculate_reward()
+        if shoot == 1:
+            self.simulation.player.shoot(shoot_angle)
 
-        done=self.simulation.game_over
+        self.simulation.next_step()
+
+        observation = self._get_obs()
+
+        reward = self._calculate_reward()
+
+        done = self.simulation.game_over
 
         return observation, reward, done, {}
-    
 
     def _calculate_reward(self):
-        reward=0
-        #TODO implement rewards for shooting and moving
-        for bot in self.simulation.bots[:2]:
-            if bot.health<=0:
-                reward-=(100-bot.health) * 0.3
-                continue
-        for bot in self.simulation.bots[:2]:
-            if bot.is_colliding(self.simulation.player.x, self.simulation.player.y):
-                reward-=10
-                continue
-        if self.simulation.player.health<100:
-            reward+=(100-self.simulation.player.health) * 0.3
+        reward = 0
+        if self.simulation.player.last_frame_bullet_hit:
+            reward += 1
+        if self.simulation.player.get_hit_last_frame:
+            reward -= 2
+        if self.simulation.player.last_frame_bullet_kill:
+            reward += 10
+        if self.simulation.game_over and self.simulation.player.health > 0:
+            reward += 100
+        if self.simulation.game_over and self.simulation.player.health <= 0:
+            reward -= 100
+
+        self.simulation.player.last_frame_bullet_hit = False
+        self.simulation.player.get_hit_last_frame = False
+        self.simulation.player.last_frame_bullet_kill = False
+
         return reward
 
-
     def render(self):
-        if self.render_mode == 'human':
+        if self.render_mode == "human":
             self.renderer.draw_frame()
         elif self.render_mode == None:
             pass
-    
+
     def close(self):
         self.renderer.close()
