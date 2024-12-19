@@ -126,6 +126,6 @@ class Simulation:
         return {
             "position": np.array([self.player.x, self.player.y], dtype=np.float32),
             "health": self.player.health,
-            "ammo": self.player.ammo,
+            "ammo": self.player.weapon.magazine,
             "isReloading": self.player.is_reloading(),
         }
