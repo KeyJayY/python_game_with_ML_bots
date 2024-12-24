@@ -23,6 +23,7 @@ class Color:
     yellow: tuple[int, int, int] = (255, 255, 0)
     light_blue: tuple[int, int, int] = (30, 144, 255)
     white: tuple[int, int, int] = (255, 255, 255)
+    light_gray: tuple[int, int, int] = (150, 150, 150)
 
 
 @dataclass(frozen=True)
@@ -34,7 +35,7 @@ class MapConfig:
 
 @dataclass(frozen=True)
 class DefaultEntityConfig:
-    color: tuple[int, int, int] = (150, 150, 150)
+    color: tuple[int, int, int] = Color().light_gray
     width: int = 20
     height: int = 20
     start_x: int = 20

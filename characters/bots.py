@@ -138,10 +138,6 @@ class Bot(ent.Entity):
         self.spawn()
         self.health = BotConfig().health
 
-    def reset(self):
-        self.spawn()
-        self.health = BotConfig().health
-
 
 class BotSprinter(Bot):
     def __init__(self, player: Player) -> None:

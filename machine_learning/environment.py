@@ -21,7 +21,7 @@ class Environment(gym.Env):
                 "jump": Discrete(2),  # 0: no jump, 1: jum
                 "shoot": Discrete(2),  # 0: no shoot, 1: shoot
                 "shoot_angle": Box(
-                    low=0, high=2 * 3.14159, shape=(), dtype=float
+                    low=0, high=2 * np.pi, shape=(), dtype=float
                 ),  # shoot angle (0, 2pi)
             }
         )
@@ -64,8 +64,8 @@ class Environment(gym.Env):
         }
         return obs
 
-    def reset(self, seed=None, options=None):
-        super().reset(seed=seed)
+    def reset(self, *, seed=None, options=None):
+        super().reset(seed=seed, options=options)
         self.simulation = Simulation()
         observation = self._get_obs()
         return observation, {}
@@ -80,22 +80,15 @@ class Environment(gym.Env):
             self.simulation.player.move(True)
         elif move == 2:
             self.simulation.player.move(False)
-
         if jump == 1:
             self.simulation.player.jump()
-
         if shoot == 1:
             self.simulation.player.shoot(shoot_angle)
-
         self.simulation.next_step()
-
         observation = self._get_obs()
-
         reward = self._calculate_reward()
-
         done = self.simulation.game_over
-
-        return observation, reward, done, {}
+        return observation, reward, done, False, {}
 
     def _calculate_reward(self):
         reward = 0

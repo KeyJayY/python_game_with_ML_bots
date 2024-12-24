@@ -1,4 +1,5 @@
 import pygame
+from characters.weapon import Gun
 from config import DefaultEntityConfig, MapConfig
 
 from enum import Enum, Flag
@@ -47,8 +48,10 @@ class Entity:
         self.last_frame_bullet_hit = False
         self.last_frame_bullet_kill = False
         self.get_hit_last_frame = False
+        self.weapon = Gun(self)
+        self.author = self
 
-    def draw(self, screen, offset_x=0, offset_y=0):
+    def draw(self, screen, offset_x: float = 0, offset_y: float = 0):
         pygame.draw.rect(
             screen,
             self.config.color,
