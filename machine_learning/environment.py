@@ -18,9 +18,6 @@ class Environment(gym.Env):
                 "move": Discrete(3),  # 0: no move, 1: right, 2: left
                 "jump": Discrete(2),  # 0: no jump, 1: jump
                 "shoot": Discrete(2),  # 0: no shoot, 1: shoot
-                "shoot_angle": Box(
-                    low=0, high=2 * np.pi, shape=(), dtype=float
-                ),  # shoot angle (0, 2pi)
             }
         )
 
@@ -57,10 +54,26 @@ class Environment(gym.Env):
     def _get_obs(self):
         obs = {
             "actor": self.simulation.get_actor(),
-            "obstacles": self.simulation.get_obstacles(),
-            "enemies": self.simulation.get_enemies(),
+            "obstacles": self._pad_obstacles(self.simulation.get_obstacles()),
+            "enemies": self._pad_enemies(self.simulation.get_enemies()),
         }
         return obs
+
+    def _pad_obstacles(self, obstacles):
+        obstacles = np.array(obstacles, dtype=np.float32)
+        if len(obstacles) < self.max_obstacles:
+            padding = np.zeros(
+                (self.max_obstacles - len(obstacles), 4), dtype=np.float32
+            )
+            obstacles = np.vstack([obstacles, padding])
+        return obstacles
+
+    def _pad_enemies(self, enemies):
+        enemies = np.array(enemies, dtype=np.float32)
+        if len(enemies) < self.max_enemies:
+            padding = np.zeros((self.max_enemies - len(enemies), 5), dtype=np.float32)
+            enemies = np.vstack([enemies, padding])
+        return enemies
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed, options=options)
@@ -72,7 +85,6 @@ class Environment(gym.Env):
         move = action["move"]
         jump = action["jump"]
         shoot = action["shoot"]
-        shoot_angle = action["shoot_angle"]
 
         if move == 1:
             self.simulation.player.move(True)
@@ -81,7 +93,8 @@ class Environment(gym.Env):
         if jump == 1:
             self.simulation.player.jump()
         if shoot == 1:
-            self.simulation.player.shoot(shoot_angle)
+            self.simulation.player.shoot(0)  # Fixed angle shooting
+
         self.simulation.next_step()
         observation = self._get_obs()
         reward = self._calculate_reward()
