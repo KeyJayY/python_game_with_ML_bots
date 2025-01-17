@@ -1,24 +1,22 @@
 import gym
-from gym.spaces import Discrete, Box, Tuple, Dict
+from gym.spaces import Discrete, Box, Dict
 import numpy as np
 from game.simulation import Simulation
-from game.renderer import Renderer
 
 
 class Environment(gym.Env):
-    metadata = {"render_modes": ["human"]}
+    metadata = {"render_modes": []}
 
     def __init__(self, render_mode=None):
         self.simulation = Simulation()
-        self.renderer = Renderer(self.simulation)
         self.max_obstacles = 20
         self.max_enemies = 10
 
         # Movement actions
         self.action_space = Dict(
             {
-                "move": Discrete(3),  # 0: no move, 1: right 2: left
-                "jump": Discrete(2),  # 0: no jump, 1: jum
+                "move": Discrete(3),  # 0: no move, 1: right, 2: left
+                "jump": Discrete(2),  # 0: no jump, 1: jump
                 "shoot": Discrete(2),  # 0: no shoot, 1: shoot
                 "shoot_angle": Box(
                     low=0, high=2 * np.pi, shape=(), dtype=float
@@ -53,7 +51,7 @@ class Environment(gym.Env):
             }
         )
 
-        assert render_mode is None or render_mode in self.metadata["render_modes"]
+        assert render_mode is None, "Render mode is not supported."
         self.render_mode = render_mode
 
     def _get_obs(self):
@@ -110,14 +108,7 @@ class Environment(gym.Env):
         return reward
 
     def render(self):
-        if self.render_mode == "human":
-            self.renderer.draw_frame()
-        elif self.render_mode == None:
-            pass
+        pass
 
     def close(self):
-        self.renderer.close()
-
-
-env = Environment()
-print(env._get_obs())
+        pass
