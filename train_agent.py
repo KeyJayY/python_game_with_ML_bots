@@ -1,4 +1,5 @@
 import re
+from game.simulation import Simulation
 from machine_learning.dql_agent import DQLAgent
 from machine_learning.environment import Environment
 from config import MLConfig
@@ -14,7 +15,19 @@ def load_checkpoint(agent, filepath):
     agent.epsilon = checkpoint["epsilon"]
     agent.timestep = checkpoint["timestep"]
 
-    
+def load_dqn_model(env: Environment):
+    ml_config = MLConfig()
+    state_dim = 2 + 1 + 1 + (env.max_obstacles * 4) + (env.max_enemies * 5)
+    action_dim = 3 * 2 * 2
+
+    agent = DQLAgent(ml_config, state_dim, action_dim)
+
+    checkpoint_dir = Path("ml_saves")
+    checkpoint_path, _ = find_latest_checkpoint(checkpoint_dir)
+    if checkpoint_path.exists():
+        load_checkpoint(agent, checkpoint_path)
+
+    return agent
 
 
 def find_latest_checkpoint(directory: Path) -> tuple[Path, int]:
@@ -36,7 +49,7 @@ def find_latest_checkpoint(directory: Path) -> tuple[Path, int]:
 checkpoint_dir = Path("ml_saves")
 checkpoint_path, start_episode = find_latest_checkpoint(checkpoint_dir)
 ml_config = MLConfig()
-env = Environment()
+env = Environment(Simulation())
 
 state_dim = 2 + 1 + 1 + (env.max_obstacles * 4) + (env.max_enemies * 5)
 action_dim = 3 * 2 * 2
@@ -47,6 +60,8 @@ agent = DQLAgent(ml_config, state_dim, action_dim)
 # Loaded checkpoint: episode: 300, timestep=280_572
 # Loaded checkpoint: episode: 400, timestep=373_986
 # Loaded checkpoint: episode: 500, timestep=465_398
+# Loaded checkpoint: episode: 600, timestep=556_939
+# Loaded checkpoint: episode: 700, timestep=647_623
 num_episodes = 1000
 max_timesteps = 1000
 

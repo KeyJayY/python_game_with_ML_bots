@@ -74,7 +74,7 @@ class Bot(ent.Entity):
         future_y: float,
     ) -> bool:
         """
-        If new position is coliding with any obstacle on the map or with the player returns `True`.
+        If new position is colliding with any obstacle on the map or with the player returns `True`.
         """
         bot_rect = pygame.Rect(
             future_x, future_y, self.config.width, self.config.height

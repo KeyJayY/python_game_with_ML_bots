@@ -69,6 +69,9 @@ class Simulation:
         for bot in self.bots:
             if random.randint(0, 10) == 1:
                 self.entities.extend(bot.random_shoot())
+        
+        for bot in self.bots:
+            bot.move_to_player()
 
         self.update_entities()
         self.check_collisions()

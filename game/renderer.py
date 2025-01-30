@@ -53,7 +53,7 @@ class Renderer:
         self.draw_ammo()
         pygame.display.flip()
 
-    def handle_mouse_and_keyborad_input(self, event):
+    def handle_mouse_and_keyboard_input(self, event):
         if event.type == pygame.QUIT:
             self.simulation.game_over = True
         elif event.type == pygame.KEYDOWN:
@@ -128,7 +128,7 @@ class Renderer:
             self.apply_offsets()
 
             for event in pygame.event.get():
-                self.handle_mouse_and_keyborad_input(event)
+                self.handle_mouse_and_keyboard_input(event)
 
             self.player_move()
 
